@@ -1,10 +1,10 @@
 --[[
 TheNexusAvenger
 
-Class representing an overrider for indexing a table or environment.
+Class representing an overridder for indexing a table or environment.
 --]]
 
-local IndexOverriderClass = {}
+local IndexOverridderClass = {}
 
 
 
@@ -15,18 +15,18 @@ local IndexOverriderClass = {}
 --------------------------------------------------------------------------------
 
 --[[
-Creates an IndexOverrider instance.
+Creates an IndexOverridder instance.
 --]]
-function IndexOverriderClass.new()
+function IndexOverridderClass.new()
 	--Create the object.
-	local IndexOverriderObject = {}
+	local IndexOverridderObject = {}
 	
-	setmetatable(IndexOverriderObject,{
-		__index = IndexOverriderClass
+	setmetatable(IndexOverridderObject,{
+		__index = IndexOverridderClass
 	})
 	
 	--Return the object.
-	return IndexOverriderObject
+	return IndexOverridderObject
 end
 
 
@@ -40,21 +40,21 @@ end
 --[[
 Returns if there is an override.
 --]]
-function IndexOverriderClass:HasOverride()
+function IndexOverridderClass:HasOverride()
 	return self.OverrideFunction ~= nil
 end
 
 --[[
 Returns the override value.
 --]]
-function IndexOverriderClass:GetOverride()
+function IndexOverridderClass:GetOverride()
 	return self.OverrideFunction()
 end
 
 --[[
 Sets the method to return a fixed value.
 --]]
-function IndexOverriderClass:ThenReturn(Override)
+function IndexOverridderClass:ThenReturn(Override)
 	self.OverrideFunction = function()
 		return Override
 	end
@@ -63,10 +63,10 @@ end
 --[[
 Sets the method to call a function and return what it returns.
 --]]
-function IndexOverriderClass:ThenCall(Callback)
+function IndexOverridderClass:ThenCall(Callback)
 	self.OverrideFunction = Callback
 end
 
 
 
-return IndexOverriderClass
+return IndexOverridderClass

@@ -18,7 +18,7 @@ Runs unit tests for the Inject method.
 --]]
 NexusUnitTesting:RegisterUnitTest("Inject",function(UnitTest)
 	local BaseTable = {Value1 = 1,Value2 = 2,Value3 = 3}
-	local Injector = DependencyInjector.CreateOverrider()
+	local Injector = DependencyInjector.CreateOverridder()
 	Injector:WhenIndexed("Value1"):ThenReturn(2)
 	Injector:WhenIndexed("Value2"):ThenCall(function()
 		return 4
@@ -35,7 +35,7 @@ Runs unit tests for the InjectEnvironmentVariables method.
 --]]
 NexusUnitTesting:RegisterUnitTest("InjectEnvironmentVariables",function(UnitTest)
 	local Printed,Warned = false,false
-	local Injector = DependencyInjector.CreateOverrider()
+	local Injector = DependencyInjector.CreateOverridder()
 	Injector:WhenCalled("print"):ThenCall(function()
 		Printed = true
 	end)
@@ -59,7 +59,7 @@ Runs unit tests for the Require method.
 --]]
 NexusUnitTesting:RegisterUnitTest("Require",function(UnitTest)
 	local Printed,Warned = false,false
-	local Injector = DependencyInjector.CreateOverrider()
+	local Injector = DependencyInjector.CreateOverridder()
 	Injector:WhenCalled("print"):ThenCall(function()
 		Printed = true
 	end)
@@ -76,11 +76,11 @@ NexusUnitTesting:RegisterUnitTest("Require",function(UnitTest)
 end)
 
 --[[
-Runs unit tests for the CreateOverrider method. Only tests that it
+Runs unit tests for the CreateOverridder method. Only tests that it
 returns an object since it has its own tets.
 --]]
-NexusUnitTesting:RegisterUnitTest("CreateOverrider",function(UnitTest)
-	UnitTest:AssertNotNil(DependencyInjector.CreateOverrider(),"No overrider returned.")
+NexusUnitTesting:RegisterUnitTest("CreateOverridder",function(UnitTest)
+	UnitTest:AssertNotNil(DependencyInjector.CreateOverridder(),"No overridder returned.")
 end)
 
 

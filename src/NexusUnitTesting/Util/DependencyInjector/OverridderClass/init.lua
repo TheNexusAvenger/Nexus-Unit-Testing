@@ -1,14 +1,14 @@
 --[[
 TheNexusAvenger
 
-Class representing an overrider.
+Class representing an overridder.
 This is used to store overrides for the Nexus Dependency Injector.
 --]]
 
-local OverriderClass = {}
+local OverridderClass = {}
 
-local IndexOverriderClass = require(script:WaitForChild("IndexOverriderClass"))
-local CallOverriderClass = require(script:WaitForChild("CallOverriderClass"))
+local IndexOverridderClass = require(script:WaitForChild("IndexOverridderClass"))
+local CallOverridderClass = require(script:WaitForChild("CallOverridderClass"))
 
 
 
@@ -19,21 +19,21 @@ local CallOverriderClass = require(script:WaitForChild("CallOverriderClass"))
 --------------------------------------------------------------------------------
 
 --[[
-Creates an overrider instance.
+Creates an overridder instance.
 --]]
-function OverriderClass.new()
+function OverridderClass.new()
 	--Create the object.
-	local OverriderObject = {
+	local OverridderObject = {
 		IndexOverrides = {},
 		CallOverrides = {},
 	}
 	
-	setmetatable(OverriderObject,{
-		__index = OverriderClass
+	setmetatable(OverridderObject,{
+		__index = OverridderClass
 	})
 	
 	--Return the object.
-	return OverriderObject
+	return OverridderObject
 end
 
 
@@ -47,14 +47,14 @@ end
 --[[
 Returns the override for determining the override of an index.
 --]]
-function OverriderClass:GetIndexOverride(Index)
+function OverridderClass:GetIndexOverride(Index)
 	return self.IndexOverrides[Index]
 end
 
 --[[
 Returns the override for determining the override of calling an index.
 --]]
-function OverriderClass:GetCallOverride(Index,Parameters)
+function OverridderClass:GetCallOverride(Index,Parameters)
 	if not Parameters then Parameters = {} end
 	local CallOverrides = self.CallOverrides[Index]
 	
@@ -71,24 +71,24 @@ end
 --[[
 Overides what is returned when a global variable is indexed.
 ]]
-function OverriderClass:WhenIndexed(Index)
-	local IndexOverrider = IndexOverriderClass.new()
-	self.IndexOverrides[Index] = IndexOverrider
+function OverridderClass:WhenIndexed(Index)
+	local IndexOverridder = IndexOverridderClass.new()
+	self.IndexOverrides[Index] = IndexOverridder
 	
-	return IndexOverrider
+	return IndexOverridder
 end
 
 --[[
 Overides what is returned when a global variable is called.
 ]]
-function OverriderClass:WhenCalled(Index,...)
-	local CallOverrider = CallOverriderClass.new({...})
+function OverridderClass:WhenCalled(Index,...)
+	local CallOverridder = CallOverridderClass.new({...})
 	if not self.CallOverrides[Index] then self.CallOverrides[Index] = {} end
-	table.insert(self.CallOverrides[Index],CallOverrider)
+	table.insert(self.CallOverrides[Index],CallOverridder)
 	
-	return CallOverrider
+	return CallOverridder
 end
 
 
 
-return OverriderClass
+return OverridderClass

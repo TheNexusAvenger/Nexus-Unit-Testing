@@ -1,10 +1,10 @@
 --[[
 TheNexusAvenger
 
-Class representing an overrider for calling an index in a table or environment.
+Class representing an overridder for calling an index in a table or environment.
 --]]
 
-local CallOverriderClass = {}
+local CallOverridderClass = {}
 
 
 
@@ -15,20 +15,20 @@ local CallOverriderClass = {}
 --------------------------------------------------------------------------------
 
 --[[
-Creates a CallOverrider instance with a set of required parameters.
+Creates a CallOverridder instance with a set of required parameters.
 --]]
-function CallOverriderClass.new(RequiredParameters)
+function CallOverridderClass.new(RequiredParameters)
 	--Create the object.
-	local CallOverriderObject = {
+	local CallOverridderObject = {
 		RequiredParameters = RequiredParameters 
 	}
 	
-	setmetatable(CallOverriderObject,{
-		__index = CallOverriderClass
+	setmetatable(CallOverridderObject,{
+		__index = CallOverridderClass
 	})
 	
 	--Return the object.
-	return CallOverriderObject
+	return CallOverridderObject
 end
 
 
@@ -42,7 +42,7 @@ end
 --[[
 Returns if meets the parameter requirement.
 --]]
-function CallOverriderClass:CanBeCalled(GivenParameters)
+function CallOverridderClass:CanBeCalled(GivenParameters)
 	--Return false if any required parameters don't match.
 	if self.RequiredParameters then
 		for i,Parameter in pairs(self.RequiredParameters) do
@@ -59,7 +59,7 @@ end
 --[[
 Calls the override and returns the values it overrides with.
 --]]
-function CallOverriderClass:GetReturn(...)
+function CallOverridderClass:GetReturn(...)
 	if self.CallMethod then
 		return self.CallMethod(...)
 	end
@@ -68,7 +68,7 @@ end
 --[[
 Sets the method to return a fixed value.
 --]]
-function CallOverriderClass:ThenReturn(Override)
+function CallOverridderClass:ThenReturn(Override)
 	self.CallMethod = function()
 		return Override
 	end
@@ -77,17 +77,17 @@ end
 --[[
 Sets the method to call a function and return what it returns.
 --]]
-function CallOverriderClass:ThenCall(Callback)
+function CallOverridderClass:ThenCall(Callback)
 	self.CallMethod = Callback
 end
 
 --[[
 Makes the method do nothing.
 --]]
-function CallOverriderClass:DoNothing()
+function CallOverridderClass:DoNothing()
 	self.CallMethod = nil
 end
 
 
 
-return CallOverriderClass
+return CallOverridderClass

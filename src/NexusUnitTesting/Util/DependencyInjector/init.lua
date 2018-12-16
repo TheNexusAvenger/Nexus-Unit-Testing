@@ -8,7 +8,7 @@ context to be able to be run.
 
 local DependencyInjector = {}
 
-local OverriderClass = require(script:WaitForChild("OverriderClass"))
+local OverridderClass = require(script:WaitForChild("OverridderClass"))
 
 
 
@@ -45,9 +45,9 @@ function DependencyInjector.Inject(ReferenceTable,Injector)
     setmetatable(NewTable,{ 
         __index = function(self,Index)
 			--Handle the index being overriden.
-			local OverrideReturn = Injector:GetIndexOverride(Index)
-			if OverrideReturn and OverrideReturn:HasOverride() then
-				local ReturnValue = OverrideReturn:GetOverride()
+			local Overriddereturn = Injector:GetIndexOverride(Index)
+			if Overriddereturn and Overriddereturn:HasOverride() then
+				local ReturnValue = Overriddereturn:GetOverride()
 				
 				--Handle the index call being overriden.
 				if type(ReturnValue) == "function" then
@@ -100,7 +100,7 @@ function DependencyInjector.Require(ModuleScript,Injector)
 	
 	--Create a default dependency injector for script.
 	if not Injector then
-		Injector = DependencyInjector.CreateOverrider()
+		Injector = DependencyInjector.CreateOverridder()
 	end
 	
 	--Add script injection if not already done.
@@ -151,8 +151,8 @@ end
 --[[
 Creates a dependency injector.
 ]]
-function DependencyInjector.CreateOverrider()
-	return OverriderClass.new()
+function DependencyInjector.CreateOverridder()
+	return OverridderClass.new()
 end
 
 
