@@ -1,0 +1,22 @@
+site_name: Nexus Unit Testing Documentation
+site_url: https://thenexusavenger.github.io/Nexus-Unit-Testing
+repo_name: TheNexusAvenger/Docs-Test
+repo_url: https://github.com/TheNexusAvenger/Nexus-Unit-Testing
+
+theme:
+  name: 'material'
+  palette:
+    primary: 'Blue'
+    accent: 'Light Blue'
+
+nav:
+  - Home: index.md
+  - Getting Started: 
+    - Studio: getting-started/studio.md
+    - Nexus Unit Testing Module: getting-started/nexus-unit-testing-module.md
+    - Util:
+      - Nexus Dependency Injector: getting-started/util/nexus-depenendy-injector.md
+  - Contributing: contributing.md
+
+markdown_extensions:
+  - admonition
