@@ -3,6 +3,9 @@ TheNexusAvenger
 
 Base class for handling unit tests.
 All assertions can be run as the static class.
+
+Repository: https://github.com/TheNexusAvenger/Nexus-Unit-Testing
+Documentation: https://thenexusavenger.github.io/Nexus-Unit-Testing
 --]]
 
 local NexusUnitTesting = {}
