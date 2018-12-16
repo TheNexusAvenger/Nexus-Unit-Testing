@@ -66,6 +66,19 @@ function NexusUnitTesting:Pass()
 end
 
 --[[
+Fails a unit test.
+--]]
+function NexusUnitTesting:Fail(Message)
+	--Set up the message.
+	if not Message then
+		Message = "Unit test failed."
+	end
+	
+	--Throw an error.
+	error(Message)
+end
+	
+--[[
 Runs an assertion. Displays a message as an error if it fails.
 --]]
 function NexusUnitTesting:Assert(Function,Message)
@@ -77,9 +90,9 @@ function NexusUnitTesting:Assert(Function,Message)
 	--Run the unit test to see if the result is expected.
 	local ResultExpected = Function()
 	
-	--If the test failed, throw an error.
+	--If the test failed, fail the unit test.
 	if not ResultExpected then
-		error(Message)
+		self:Fail(Message)
 	end
 end
 
@@ -347,24 +360,6 @@ function NexusUnitTesting:AssertErrors(Function,Message)
 	
 	--Run the assertion.
 	self:Assert(Assert,Message)	
-end
-
---[[
-Fails a unit test.
---]]
-function NexusUnitTesting:Fail(Message)
-	--Set up the message.
-	if not Message then
-		Message = "Unit test failed."
-	end
-	
-	--Set up the function.
-	local function Assert()
-		return false
-	end
-	
-	--Run the assertion.
-	self:Assert(Assert,Message)
 end
 
 
