@@ -1,3 +1,4 @@
+# Contributing
 Bugs and requests can be made through issues. Pull requests are
 open, but will only be accepted if they have the following:
 <br>1. A reason to be pulled.

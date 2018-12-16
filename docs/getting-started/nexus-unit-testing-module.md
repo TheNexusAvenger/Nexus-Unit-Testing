@@ -1,3 +1,4 @@
+# Nexus Unit Testing Module
 The following is the documentation for the main module.
 Examples can be found in:
 <br>1. [`/test/NexusUnitTesting_Assertions.lua`](https://github.com/TheNexusAvenger/Nexus-Unit-Testing/blob/master/test/NexusUnitTesting_Assertions.lua)
