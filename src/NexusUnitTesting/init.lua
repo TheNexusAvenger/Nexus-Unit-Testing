@@ -57,6 +57,11 @@ Displays a message that the unit test passed. Implicitly called after
 completing the function passed into NexusUnitTesting::RegisterUnitTest.
 ]]
 function NexusUnitTesting:Pass()
+	--End the co-routine if the unit test passed in a different thread.
+	if self.__Passed then
+		coroutine.yield()
+	end
+	
 	--Display the message.
 	if self.Name then
 		print(self.Name..": Passed")
@@ -65,6 +70,7 @@ function NexusUnitTesting:Pass()
 	end
 	
 	--End the co-routine.
+	self.__Passed = true
 	coroutine.yield()
 end
 
@@ -72,6 +78,11 @@ end
 Fails a unit test.
 --]]
 function NexusUnitTesting:Fail(Message)
+	--End the co-routine if the unit test passed in a different thread.
+	if self.__Passed then
+		coroutine.yield()
+	end
+	
 	--Set up the message.
 	if not Message then
 		Message = "Unit test failed."

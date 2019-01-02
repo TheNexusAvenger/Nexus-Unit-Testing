@@ -39,7 +39,29 @@ NexusUnitTesting:RegisterUnitTest("PassPartWayThrough",function(UnitTest)
 	UnitTest:Fail("Pass doesn't stop test")
 end)
 
+--[[
+Tests that failing won't work after calling pass in a seperate co-routine.
+--]]
+NexusUnitTesting:RegisterUnitTest("ThreadingPassAndFail",function(UnitTest)
+	coroutine.wrap(function()
+		UnitTest:Pass()
+	end)()
+	
+	wait(0.1)
+	UnitTest:Fail("Pass doesn't stop test in a thread")
+end)
 
+--[[
+Tests that passing won't happen twice. The output does need to be
+checked manually.
+--]]
+NexusUnitTesting:RegisterUnitTest("ThreadingDuplicatePass",function(UnitTest)
+	coroutine.wrap(function()
+		UnitTest:Pass()
+	end)()
+	
+	wait(0.1)
+end)
 
 --Return true so there is no error with loading the ModuleScript.
 return true
