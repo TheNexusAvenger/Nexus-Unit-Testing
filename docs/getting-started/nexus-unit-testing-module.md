@@ -29,6 +29,12 @@ be assigned to the object.
     not have an associated name and will not implicitly
     call pass at the end of a unit test.
 
+### `NexusUnitTesting:RegisterUnitTest(String Name,Function UnitTestFunction)`
+Creates an instance of a unit test, sets the name of
+the unit test, and runs the unit test function in
+a co-routine. The given function has the unit test
+as a parameter for running assertions.
+
 ### `NexusUnitTesting:Pass()`
 Ends the unit tests and considers the test a success.
 
@@ -115,8 +121,5 @@ Asserts that a given object is `nil`.
 ### `NexusUnitTesting:AssertNotNil(Object Actual,String FailureMessage)`
 Asserts that a given object is not `nil`.
 
-### `NexusUnitTesting:RegisterUnitTest(String Name,Function UnitTestFunction)`
-Creates an instance of a unit test, sets the name of
-the unit test, and runs the unit test function in
-a co-routine. The given function has the unit test
-as a parameter for running assertions.
+### `NexusUnitTesting:AssertErrors(Function FunctionWithError,String FailureMessage)`
+Asserts that a given function will produce an error.
