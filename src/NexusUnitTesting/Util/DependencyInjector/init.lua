@@ -8,7 +8,7 @@ context to be able to be run.
 
 local DependencyInjector = {}
 
-local OverridderClass = require(script:WaitForChild("OverridderClass"))
+local OverriderClass = require(script:WaitForChild("OverriderClass"))
 
 
 
@@ -45,9 +45,9 @@ function DependencyInjector.Inject(ReferenceTable,Injector)
     setmetatable(NewTable,{ 
         __index = function(self,Index)
 			--Handle the index being overriden.
-			local Overriddereturn = Injector:GetIndexOverride(Index)
-			if Overriddereturn and Overriddereturn:HasOverride() then
-				local ReturnValue = Overriddereturn:GetOverride()
+			local Overridereturn = Injector:GetIndexOverride(Index)
+			if Overridereturn and Overridereturn:HasOverride() then
+				local ReturnValue = Overridereturn:GetOverride()
 				
 				--Handle the index call being overriden.
 				if type(ReturnValue) == "function" then
@@ -100,22 +100,26 @@ function DependencyInjector.Require(ModuleScript,Injector)
 	
 	--Create a default dependency injector for script.
 	if not Injector then
-		Injector = DependencyInjector.CreateOverridder()
+		Injector = DependencyInjector.CreateOverrider()
 	end
+	local NewInjector = Injector:Clone()
 	
 	--Add script injection if not already done.
-	if not Injector:GetIndexOverride("script") then
-		Injector:WhenIndexed("script"):ThenReturn(ModuleScript)
+	if not NewInjector:GetIndexOverride("script") then
+		NewInjector:WhenIndexed("script"):ThenReturn(ModuleScript)
 	end
 	
 	--Add require injection if not already done.
-	if not Injector:GetIndexOverride("require") and not Injector:GetCallOverride("require") then
-		Injector:WhenIndexed("require"):ThenReturn(DependencyInjector.Require)
+	if not NewInjector:GetIndexOverride("require") and not NewInjector:GetCallOverride("require") then
+		--Injector:WhenIndexed("require"):ThenReturn(DependencyInjector.Require)
+		NewInjector:WhenIndexed("require"):ThenReturn(function(ModuleScript)
+			return DependencyInjector.Require(ModuleScript,Injector)
+		end)
 	end
 	
     --Forward everything but wait calls to the original env
 	local function BuildFieldEnvironment(InjectedFunction)
-		DependencyInjector.InjectEnvironmentVariables(InjectedFunction,Injector)
+		DependencyInjector.InjectEnvironmentVariables(InjectedFunction,NewInjector)
 	end
 	
 	--Set up the field environments.
@@ -151,8 +155,8 @@ end
 --[[
 Creates a dependency injector.
 ]]
-function DependencyInjector.CreateOverridder()
-	return OverridderClass.new()
+function DependencyInjector.CreateOverrider()
+	return OverriderClass.new()
 end
 
 

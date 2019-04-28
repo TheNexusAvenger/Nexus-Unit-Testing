@@ -35,78 +35,86 @@ the original script's reference.
     modification of the source. It has to be run in a plugin
     or command line context.
 
-### `DependencyInjector.CreateOverridder()`
-Creates and returns an overridder class. This is used
+### `DependencyInjector.CreateOverrider()`
+Creates and returns an overrider class. This is used
 for the various injection methods.
 
-## Overridder Functions
-### `Overridder.new()`
-Creates an instance of an Overridder class. This is called
-with `DependencyInjector.CreateOverridder()`.
+## Overrider Functions
+### `Overrider.new()`
+Creates an instance of an Overrider class. This is called
+with `DependencyInjector.CreateOverrider()`.
 
-### `Overridder:GetIndexOverride(Object Index)`
-Returns the IndexOverridder for a given index. Nil gets
+### `Overrider:Clone()`
+Clones the overrider object. It does not clone the individual overriders, but
+adding new overrides will not affect the existing object.
+
+### `Overrider:GetIndexOverride(Object Index)`
+Returns the IndexOverrider for a given index. Nil gets
 returned if there is no override.
 
-### `Overridder:GetCallOverride(Object Index,Table Parameters)`
-Returns the CallOverridder for a given index. Nil gets
-returned if there is no Overridder or the Overridders
+### `Overrider:GetIndexOverride(Object Index)`
+Returns the IndexOverrider for a given index. Nil gets
+returned if there is no override.
+
+### `Overrider:GetCallOverride(Object Index,Table Parameters)`
+Returns the CallOverrider for a given index. Nil gets
+returned if there is no Overrider or the Overriders
 can't return for the given parameters.
 
-### `Overridder:WhenIndexed(Object Index)`
-Creates and returns an IndexOverridder object for a
+### `Overrider:WhenIndexed(Object Index)`
+Creates and returns an IndexOverrider object for a
 given index.
 
-### `Overridder:WhenCalled(Index,...)`
-Creates and returns a CallOverridder object for a
+### `Overrider:WhenCalled(Index,...)`
+Creates and returns a CallOverrider object for a
 given index. Any additional parameters are treated
 as parameters that must match to be considered an
 override. An example is overriding `math.random`
 if the bounds are 2 and 5.
 
-## IndexOverridder Functions
-### `IndexOverridder.new()`
-Creates an IndexOverridder object.
+## IndexOverrider Functions
+### `IndexOverrider.new()`
+Creates an IndexOverrider object.
 
-### `IndexOverridder:HasOverride()`
-Returns if there an override set for the IndexOverridder.
+### `IndexOverrider:HasOverride()`
+Returns if there an override set for the IndexOverrider.
 
-### `IndexOverridder:GetOverride()`
+### `IndexOverrider:GetOverride()`
 Returns the current override.
 
-### `IndexOverridder:ThenReturn(Object Override)`
+### `IndexOverrider:ThenReturn(Object Override)`
 Sets the override to return a fixed object when
-IndexOverridder::GetOverride is called.
+IndexOverrider::GetOverride is called.
 
-### `IndexOverridder:ThenCall(Function ReturnFunction)`
-Sets the override to a function. When `IndexOverridder::GetOverride`
+### `IndexOverrider:ThenCall(Function ReturnFunction)`
+Sets the override to a function. When `IndexOverrider::GetOverride`
 is called, the given function will be run and the
 override will be what the function returns.
 
 ## CallOverride Functions
-### `CallOverridder.new(Table RequiredParameters)`
-Creates a CallOverridder object. Takes in a set of required
+### `CallOverrider.new(Table RequiredParameters)`
+Creates a CallOverrider object. Takes in a set of required
 parameters for the override to be called.
 
-### `CallOverridder:CanBeCalled(Table GivenParameters)`
+### `CallOverrider:CanBeCalled(Table GivenParameters)`
 Returns if the override is valid for the
 given set of overrides. It is assumed an
 extra parameters beyond the initial RequiredParameters
 will be considered valid.
 
-### `CallOverridder:GetReturn(...)`
+### `CallOverrider:GetReturn(...)`
 Returns the override with the given set
 of parameters.
 
-### `CallOverridder:ThenReturn(Object Override)`
-Sets the CallOverridder to return a specific
+### `CallOverrider:ThenReturn(Object Override)`
+Sets the CallOverrider to return a specific
 Object when called.
 
-### `CallOverridder:ThenCall(Function Callback)`
-Sets the CallOverridder to call a given callback
+### `CallOverrider:ThenCall(Function Callback)`
+Sets the CallOverrider to call a given callback
 and return what the Callback returns. The Callback's
 parameters will include all of the parameters that
 the function was called with.
 
-### `CallOverridder:DoNothing()`
-Sets the CallOverridder to do nothing when called.
+### `CallOverrider:DoNothing()`
+Sets the CallOverrider to do nothing when called.

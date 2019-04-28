@@ -13,8 +13,8 @@ Any other tools that follow the same file structure will work.
 ## Exporting From Studio
 No public tool is currently provided for exporting Rojo
 projects from Roblox Studio. "Nexus Project Syncer" currently
-exists as an internal tool but will require significant work
-done before it can be released. The end goal of that project
-will be to replace Rojo while still being compatible. This
-functionality is expected to be added to Rojo in the near
-future.
+exists as an internal tool but would require signifcant work
+to be published. The final version that will be relased (hopefully
+by the end of July) would be known as "Nexus Git" or "Nexus RoGit"
+to be able to pull and push projects, as well as handle common
+Git actions.

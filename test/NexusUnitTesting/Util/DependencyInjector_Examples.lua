@@ -18,7 +18,7 @@ Runs unit tests for the Inject method with the math library.
 --]]
 NexusUnitTesting:RegisterUnitTest("Inject_RepeatableMathRandom",function(UnitTest)
 	local i = 1
-	local Injector = DependencyInjector.CreateOverridder()
+	local Injector = DependencyInjector.CreateOverrider()
 	Injector:WhenCalled("random",1,10):ThenCall(function()
 		i = i + 1
 		return i
@@ -36,7 +36,7 @@ end)
 Runs unit tests for the Inject method with Require to define a ModuleScript "Seam".
 --]]
 NexusUnitTesting:RegisterUnitTest("Require_Seam",function(UnitTest)
-	local Injector = DependencyInjector.CreateOverridder()
+	local Injector = DependencyInjector.CreateOverrider()
 	Injector:WhenCalled("require",game.Workspace):ThenReturn(function()
 		return math.pi
 	end)
@@ -55,19 +55,19 @@ NexusUnitTesting:RegisterUnitTest("InjectEnvironmentVariables_DataStoreSimulated
 	local ProperErrorWarned = false
 	
 	--Create the fake DataStore.
-	local FakeDataStoreInjector = DependencyInjector.CreateOverridder()
+	local FakeDataStoreInjector = DependencyInjector.CreateOverrider()
 	FakeDataStoreInjector:WhenCalled("GetAsync"):ThenCall(function()
 		error("HTTP Service 503: Simulated error.")
 	end)
 	local FakeDataStore = DependencyInjector.Inject({},FakeDataStoreInjector)
 	
 	--Create the fake DataStoreService.
-	local DataStoreServiceInjector = DependencyInjector.CreateOverridder()
+	local DataStoreServiceInjector = DependencyInjector.CreateOverrider()
 	DataStoreServiceInjector:WhenCalled("GetGlobalDataStore"):ThenReturn(FakeDataStore)
 	local FakeDataStoreService = DependencyInjector.Inject({},DataStoreServiceInjector)
 	
 	--Create the fake game.
-	local GameInjector = DependencyInjector.CreateOverridder()
+	local GameInjector = DependencyInjector.CreateOverrider()
 	GameInjector:WhenIndexed("GetService"):ThenReturn(function(_,Index)
 		if Index == "DataStoreService" then
 			return FakeDataStoreService
@@ -76,7 +76,7 @@ NexusUnitTesting:RegisterUnitTest("InjectEnvironmentVariables_DataStoreSimulated
 	local FakeGame = DependencyInjector.Inject({},GameInjector)
 	
 	--Create the main injector.
-	local Injector = DependencyInjector.CreateOverridder()
+	local Injector = DependencyInjector.CreateOverrider()
 	Injector:WhenIndexed("game"):ThenReturn(FakeGame)
 	Injector:WhenCalled("warn"):ThenCall(function(Warning)
 		if string.match(Warning,"HTTP Service 503: Simulated error.") then
@@ -114,7 +114,7 @@ NexusUnitTesting:RegisterUnitTest("InjectEnvironmentVariables_SimulatedWorkspace
 	FakeBaseplate.Parent = FakeWorkspace
 	
 	--Create the fake game.
-	local GameInjector = DependencyInjector.CreateOverridder()
+	local GameInjector = DependencyInjector.CreateOverrider()
 	GameInjector:WhenIndexed("Workspace"):ThenReturn(FakeWorkspace)
 	GameInjector:WhenIndexed("GetService"):ThenReturn(function(_,Index)
 		if Index == "Workspace" then
@@ -124,7 +124,7 @@ NexusUnitTesting:RegisterUnitTest("InjectEnvironmentVariables_SimulatedWorkspace
 	local FakeGame = DependencyInjector.Inject({},GameInjector)
 	
 	--Create the main injector.
-	local Injector = DependencyInjector.CreateOverridder()
+	local Injector = DependencyInjector.CreateOverrider()
 	Injector:WhenIndexed("game"):ThenReturn(FakeGame)
 	
 	--Create an inject the function.
