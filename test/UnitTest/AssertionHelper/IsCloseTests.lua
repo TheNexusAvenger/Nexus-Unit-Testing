@@ -6,7 +6,7 @@ Tests the IsClose helper function.
 
 local NexusUnitTesting = require("NexusUnitTesting")
 
-local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"))
+local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("NexusUnitTestingProject"))
 local IsClose = NexusUnitTestingProject:GetResource("UnitTest.AssertionHelper.IsClose")
 
 local DEFAULT_EPSIOLON = 0.001

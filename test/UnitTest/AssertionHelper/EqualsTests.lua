@@ -6,7 +6,7 @@ Tests the Equals helper function.
 
 local NexusUnitTesting = require("NexusUnitTesting")
 
-local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"))
+local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("NexusUnitTestingProject"))
 local Equals = NexusUnitTestingProject:GetResource("UnitTest.AssertionHelper.Equals")
 
 
