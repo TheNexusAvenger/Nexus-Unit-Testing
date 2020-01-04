@@ -12,7 +12,10 @@
 				"$path": "module/Nexus-Instance/src"
 			  },
 			  "NexusProject": {
-				"$path": "module/Nexus-Project/src"
+				"$path": "module/Nexus-Project/src",
+				"NexusInstance": {
+					"$path": "module/Nexus-Instance/src"
+				  }
 			  },
 			  "TestEZ": {
 				"$path": "module/TestEZ/lib"
