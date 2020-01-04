@@ -1,0 +1,9 @@
+[submodule "module/Nexus-Instance"]
+	path = module/Nexus-Instance
+	url = https://github.com/TheNexusAvenger/Nexus-Instance.git
+[submodule "module/Nexus-Project"]
+	path = module/Nexus-Project
+	url = https://github.com/TheNexusAvenger/Nexus-Project.git
+[submodule "module/TestEZ"]
+	path = module/TestEZ
+	url = https://github.com/Roblox/testez.git
