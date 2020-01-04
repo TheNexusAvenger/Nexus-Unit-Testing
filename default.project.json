@@ -1,0 +1,26 @@
+  
+{
+	"name": "Repository",
+	"servePort": 8000,
+	"tree": {
+		"$className": "DataModel",
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"NexusUnitTesting": {
+			  "$path": "src",
+			  "NexusInstance": {
+				"$path": "module/Nexus-Instance/src"
+			  },
+			  "NexusProject": {
+				"$path": "module/Nexus-Project/src"
+			  },
+			  "TestEZ": {
+				"$path": "module/TestEZ/lib"
+			  }
+			},
+			"NexusUnitTestingTests": {
+			  "$path": "test"
+			}
+		}
+	}
+}
