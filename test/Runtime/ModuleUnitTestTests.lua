@@ -177,6 +177,50 @@ NexusUnitTesting:RegisterUnitTest("RequireAllFailingSubtests",function(UnitTest)
 end)
 
 --[[
+Tests requiring a module with passing subtests in a return function.
+--]]
+NexusUnitTesting:RegisterUnitTest("RequirePassingSubtestsReturnSubfunction",function(UnitTest)
+	--Create the module.
+	local Folder = Instance.new("Folder")
+	Folder.Name = "TestFolder"
+	local Module = Instance.new("ModuleScript")
+	Module.Name = "TestModule"
+	Module.Source = "local NexusUnitTesting = require(\"NexusUnitTesting\") return function()"..
+		"NexusUnitTesting:RegisterUnitTest(NexusUnitTesting.UnitTest.new(\"Test1\"):SetRun(function(self) self:AssertTrue(true) end)) "..
+		"NexusUnitTesting:RegisterUnitTest(NexusUnitTesting.UnitTest.new(\"Test2\"):SetRun(function(self) self:AssertTrue(true) end)) "..
+		"end"
+	Module.Parent = Folder
+	
+	--Create the component under testing.
+	local CuT = ModuleUnitTest.new(Module)
+	
+	--Assert the test is ran correctly.
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	CuT:RunTest()
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.Passed,"Test not passed.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.Passed,"Test not passed.")
+	UnitTest:AssertEquals(#CuT.SubTests,2,"Total subtests is not correct.")
+	UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test1","Subtest name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.NotRun,"Subtest ran.")
+	UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.NotRun,"Subtest ran.")
+	UnitTest:AssertEquals(CuT.SubTests[2].Name,"Test2","Subtest name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[2].State,NexusUnitTestingProject.TestState.NotRun,"Subtest ran.")
+	UnitTest:AssertEquals(CuT.SubTests[2].CombinedState,NexusUnitTestingProject.TestState.NotRun,"Subtest ran.")
+	
+	--Assert the subtests are ran correctly.
+	CuT:RunSubtests()
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.Passed,"Test not passed.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.Passed,"Test not passed.")
+	UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test1","Subtest name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Passed,"Subtest not passed.")
+	UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Passed,"Subtest not passed.")
+	UnitTest:AssertEquals(CuT.SubTests[2].Name,"Test2","Subtest name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[2].State,NexusUnitTestingProject.TestState.Passed,"Subtest not passed.")
+	UnitTest:AssertEquals(CuT.SubTests[2].CombinedState,NexusUnitTestingProject.TestState.Passed,"Subtest not passed.")
+end)
+
+--[[
 Tests requiring a module using TestEZ.
 --]]
 --[[

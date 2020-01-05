@@ -53,7 +53,12 @@ function ModuleUnitTest:Run()
 	end
 	
 	--Require the module.
-	self.Sandbox:RequireModule(self.ModuleScript,EnvironmentOverrides)
+	local TestReturn = self.Sandbox:RequireModule(self.ModuleScript,EnvironmentOverrides)
+	
+	--Call the function if a function was returend (used by TestEZ)
+	if type(TestReturn) == "function" then
+		TestReturn()
+	end
 end
 
 
