@@ -12,6 +12,10 @@ local ModuleSandbox = NexusUnitTesting:GetResource("UnitTest.ModuleSandbox")
 local Equals = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.Equals")
 local IsClose = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.IsClose")
 local ErrorAssertor = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.ErrorAssertor")
+local TestPlanner = NexusUnitTesting:GetResource("TestEZ.TestPlanner")
+local TestPlanBuilder = NexusUnitTesting:GetResource("TestEZ.TestPlanBuilder")
+local TestEnum = NexusUnitTesting:GetResource("TestEZ.TestEnum")
+local TestRunner = NexusUnitTesting:GetResource("TestEZ.TestRunner")
 
 local UnitTest = NexusInstance:Extend()
 UnitTest:SetClassName("UnitTest")
@@ -21,8 +25,8 @@ UnitTest.UnitTest = UnitTest
 
 local UNIT_TEST_STATE_PRIORITY = {
 	[NexusUnitTesting.TestState.NotRun] = 1,
-	[NexusUnitTesting.TestState.Skipped] = 2,
-	[NexusUnitTesting.TestState.Passed] = 3,
+	[NexusUnitTesting.TestState.Passed] = 2,
+	[NexusUnitTesting.TestState.Skipped] = 3,
 	[NexusUnitTesting.TestState.Failed] = 4,
 	[NexusUnitTesting.TestState.InProgress] = 5,
 }
@@ -56,6 +60,7 @@ function UnitTest:__new(Name)
 			return self.Sandbox:RequireModule(Module)
 		end,
 	}
+	self:AddTestEZOverrides()
 	
 	--Create the events.
 	self.TestAdded = NexusEventCreator:CreateEvent()
@@ -66,6 +71,21 @@ function UnitTest:__new(Name)
 	self:GetPropertyChangedSignal("State"):Connect(function()
 		self:UpdateCombinedState()
 	end)
+end
+
+--[[
+Adds overrides for TestEZ.
+--]]
+function UnitTest:AddTestEZOverrides()
+	--Create the base environment.
+	local PlanBuilder = TestPlanBuilder.new()
+	self.PlanBuilder = PlanBuilder
+	local Environment = TestPlanner.createEnvironment(PlanBuilder)
+	
+	--Add the methods.
+	for Key,Value in pairs(Environment) do
+		self.Overrides[Key] = Value
+	end
 end
 
 --[[
@@ -169,6 +189,59 @@ function UnitTest:RegisterUnitTest(NewUnitTest,Function)
 end
 
 --[[
+Runs the run method and any TestEZ tests.
+--]]
+function UnitTest:BaseRunTest()
+	--Run the test.
+	self:Run()
+	
+	--Run the TestEZ tests if any were defined.
+	local TestEZPlan = self.PlanBuilder:finalize()
+	if #TestEZPlan.children >= 1 then
+		local TestEZResults = TestRunner.runPlan(TestEZPlan)
+		
+		--[[
+		Visits a child node.
+		--]]
+		local function VisitChildNode(Node,ParentTest)
+			local Status = Node.status
+			local PlanNode = Node.planNode
+			local Skipped = PlanNode.modifier == "Skip"
+			
+			--Create the new test.
+			local NewTest = UnitTest.new(PlanNode.phrase)
+			ParentTest:RegisterUnitTest(NewTest)
+			if Skipped or ParentTest.State == NexusUnitTesting.TestState.Skipped then
+				NewTest.State = NexusUnitTesting.TestState.Skipped
+			elseif Status == "Success" then
+				NewTest.State = NexusUnitTesting.TestState.Passed
+			elseif Status == "Failure" then
+				NewTest.State = NexusUnitTesting.TestState.Failed
+			end
+			
+			--Visit the child nodes.
+			for _,ChildNode in pairs(Node.children) do
+				VisitChildNode(ChildNode,NewTest)
+			end
+			
+			--Update the combined state.
+			NewTest:UpdateCombinedState()
+			
+			--Output the error(s).
+			for _,Error in pairs(Node.errors) do
+				self:OutputMessage(Enum.MessageType.MessageError,string.split(Error,"\n",1)[1])
+				self:OutputMessage(Enum.MessageType.MessageInfo,Error)
+			end
+		end
+		
+		--Visit the children.
+		for _,ChildNode in pairs(TestEZResults.children) do
+			VisitChildNode(ChildNode,self)
+		end
+	end
+end
+
+--[[
 Runs the complete text. Should not be overriden
 to run tests since it is intended to be used by the
 view to run tests.
@@ -211,7 +284,7 @@ function UnitTest:RunTest()
 	--Run the test.
 	local TestWorked = true
 	coroutine.wrap(function()
-		TestWorked = yxpcall(function() self:Run() end,function(ErrorMessage,StackTrace)
+		TestWorked = yxpcall(function() self:BaseRunTest() end,function(ErrorMessage,StackTrace)
 			self:OutputMessage(Enum.MessageType.MessageError,ErrorMessage)
 			self:OutputMessage(Enum.MessageType.MessageInfo,StackTrace)
 			self.State = NexusUnitTesting.TestState.Failed
@@ -252,7 +325,9 @@ function UnitTest:RunSubtests()
 		
 		--Run the subtests to get the tests.
 		for _,Test in pairs(self.SubTests) do
-			Test:RunTest()
+			if Test.State == NexusUnitTesting.TestState.NotRun then
+				Test:RunTest()
+			end
 		end
 		
 		--Run the subtests' subtests.

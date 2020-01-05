@@ -260,6 +260,360 @@ NexusUnitTesting:RegisterUnitTest("RunTestNoErrors",function(UnitTest)
 end)
 
 --[[
+Tests the RunTest method with a passing TestEZ test.
+--]]
+NexusUnitTesting:RegisterUnitTest("RunTestTestEZPass",function(UnitTest)
+	--Create the component under testing.
+	local CuT = UnitTestClass.new("TestName")
+	
+	--Set up the methods.
+	local SetupRun,TestRun,TeardownRun = false,false,false
+	local StateTestCompleted,CombinedStateTestCompleted = false,false
+	function CuT:Setup()
+		SetupRun = true
+		UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+	end
+	
+	CuT.IS_TESTEZ = true
+	
+	CuT.MessageOutputted:Connect(function(Message,Type)
+		print(Message)
+	end)
+	
+	function CuT:Run()
+		TestRun = true
+		
+		--Get the TestEZ methods from the environment to prevent Script Analysis from showing problems.
+		local describe = getfenv().describe
+		local it = getfenv().it
+		
+		--Describe the test.
+		describe("Test",function()
+			it("state should be in progress", function()
+				local expect = getfenv().expect
+				expect(self.State).to.equal(NexusUnitTestingProject.TestState.InProgress)
+				StateTestCompleted = true
+			end)
+			
+			it("combined state should be in progress", function()
+				local expect = getfenv().expect
+				expect(self.CombinedState).to.equal(NexusUnitTestingProject.TestState.InProgress)
+				CombinedStateTestCompleted = true
+			end)
+		end)
+	end
+	
+	function CuT:Teardown()
+		TeardownRun = true
+		UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+	end
+	
+	--Run the test and assert the states are correct.
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	CuT:RunTest()
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.Passed,"Test not passed.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.Passed,"Test not passed.")
+	UnitTest:AssertTrue(SetupRun,"Setup not ran.")
+	UnitTest:AssertTrue(TestRun,"Test not ran.")
+	UnitTest:AssertTrue(TeardownRun,"Teardown not ran.")
+	UnitTest:AssertTrue(StateTestCompleted,"Test case not ran.")
+	UnitTest:AssertTrue(CombinedStateTestCompleted,"Test case not ran.")
+	
+	--Assert the subtests are correct.
+	UnitTest:AssertEquals(#CuT.SubTests,1,"Subtests count is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test","\"Describe\" name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Passed,"\"Describe\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Passed,"\"Describe\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests,2,"\"Describe\" subtests is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].Name,"state should be in progress","\"It\" name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].State,NexusUnitTestingProject.TestState.Passed,"\"It\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Passed,"\"It\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[1].SubTests,0,"\"It\" has subtets.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].Name,"combined state should be in progress")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].State,NexusUnitTestingProject.TestState.Passed,"\"It\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].CombinedState,NexusUnitTestingProject.TestState.Passed,"\"It\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[2].SubTests,0,"\"It\" has subtets.")
+end)
+
+--[[
+Tests the RunTest method with a failing TestEZ test.
+--]]
+NexusUnitTesting:RegisterUnitTest("RunTestTestEZFailedTest",function(UnitTest)
+	--Create the component under testing.
+	local CuT = UnitTestClass.new("TestName")
+	
+	--Set up the methods.
+	local SetupRun,TestRun,TeardownRun = false,false,false
+	local StateTestCompleted,CombinedStateTestCompleted = false,false
+	function CuT:Setup()
+		SetupRun = true
+		UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+	end
+	
+	function CuT:Run()
+		TestRun = true
+		
+		--Get the TestEZ methods from the environment to prevent Script Analysis from showing problems.
+		local describe = getfenv().describe
+		local it = getfenv().it
+		
+		--Describe the test.
+		describe("Test",function()
+			it("state should be in progress", function()
+				local expect = getfenv().expect
+				expect(self.State).to.equal(NexusUnitTestingProject.TestState.InProgress)
+				StateTestCompleted = true
+			end)
+			
+			it("combined state should be in progress", function()
+				local expect = getfenv().expect
+				expect(self.CombinedState).to.equal(NexusUnitTestingProject.TestState.Failed)
+				CombinedStateTestCompleted = true
+			end)
+		end)
+	end
+	
+	function CuT:Teardown()
+		TeardownRun = true
+		UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+	end
+	
+	--Run the test and assert the states are correct.
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	CuT:RunTest()
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.Passed,"Test not passed.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.Failed,"Test not passed.")
+	UnitTest:AssertTrue(SetupRun,"Setup not ran.")
+	UnitTest:AssertTrue(TestRun,"Test not ran.")
+	UnitTest:AssertTrue(TeardownRun,"Teardown not ran.")
+	UnitTest:AssertTrue(StateTestCompleted,"Test case not ran.")
+	UnitTest:AssertFalse(CombinedStateTestCompleted,"Test case ran.")
+	
+	--Assert the subtests are correct.
+	UnitTest:AssertEquals(#CuT.SubTests,1,"Subtests count is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test","\"Describe\" name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Failed,"\"Describe\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Failed,"\"Describe\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests,2,"\"Describe\" subtests is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].Name,"state should be in progress","\"It\" name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].State,NexusUnitTestingProject.TestState.Passed,"\"It\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Passed,"\"It\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[1].SubTests,0,"\"It\" has subtets.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].Name,"combined state should be in progress")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].State,NexusUnitTestingProject.TestState.Failed,"\"It\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].CombinedState,NexusUnitTestingProject.TestState.Failed,"\"It\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[2].SubTests,0,"\"It\" has subtets.")
+end)
+
+--[[
+Tests the RunTest method with a failing TestEZ setup.
+--]]
+NexusUnitTesting:RegisterUnitTest("RunTestTestEZFailedSetup",function(UnitTest)
+	--Create the component under testing.
+	local CuT = UnitTestClass.new("TestName")
+	
+	--Set up the methods.
+	local SetupRun,TestRun,TeardownRun = false,false,false
+	function CuT:Setup()
+		SetupRun = true
+		UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+	end
+	
+	function CuT:Run()
+		TestRun = true
+		
+		--Get the TestEZ methods from the environment to prevent Script Analysis from showing problems.
+		local describe = getfenv().describe
+		local it = getfenv().it
+		
+		--Describe the test.
+		describe("Test",function()
+			error("Fake error")
+		end)
+	end
+	
+	function CuT:Teardown()
+		TeardownRun = true
+		UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+	end
+	
+	--Run the test and assert the states are correct.
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	CuT:RunTest()
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.Passed,"Test not passed.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.Failed,"Test not passed.")
+	UnitTest:AssertTrue(SetupRun,"Setup not ran.")
+	UnitTest:AssertTrue(TestRun,"Test not ran.")
+	UnitTest:AssertTrue(TeardownRun,"Teardown not ran.")
+	
+	--Assert the subtests are correct.
+	UnitTest:AssertEquals(#CuT.SubTests,1,"Subtests count is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test","\"Describe\" name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Failed,"\"Describe\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Failed,"\"Describe\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests,0,"\"Describe\" subtests is incorrect.")
+end)
+
+--[[
+Tests the RunTest method with a skipping TestEZ setup.
+--]]
+NexusUnitTesting:RegisterUnitTest("RunTestTestEZSkippedSetup",function(UnitTest)
+	--Create the component under testing.
+	local CuT = UnitTestClass.new("TestName")
+	
+	--Set up the methods.
+	local SetupRun,TestRun,TeardownRun = false,false,false
+	local StateTestCompleted,CombinedStateTestCompleted = false,false
+	function CuT:Setup()
+		SetupRun = true
+		UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+	end
+	
+	function CuT:Run()
+		TestRun = true
+		
+		--Get the TestEZ methods from the environment to prevent Script Analysis from showing problems.
+		local describe = getfenv().describe
+		local SKIP = getfenv().SKIP
+		local it = getfenv().it
+		
+		--Describe the test.
+		describe("Test",function()
+			SKIP()
+			
+			it("state should be in progress", function()
+				local expect = getfenv().expect
+				expect(self.State).to.equal(NexusUnitTestingProject.TestState.InProgress)
+				StateTestCompleted = true
+			end)
+			
+			it("combined state should be in progress", function()
+				local expect = getfenv().expect
+				expect(self.CombinedState).to.equal(NexusUnitTestingProject.TestState.InProgress)
+				CombinedStateTestCompleted = true
+			end)
+		end)
+	end
+	
+	function CuT:Teardown()
+		TeardownRun = true
+		UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+	end
+	
+	--Run the test and assert the states are correct.
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	CuT:RunTest()
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.Passed,"Test not passed.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.Skipped,"Test not passed.")
+	UnitTest:AssertTrue(SetupRun,"Setup not ran.")
+	UnitTest:AssertTrue(TestRun,"Test not ran.")
+	UnitTest:AssertTrue(TeardownRun,"Teardown not ran.")
+	UnitTest:AssertFalse(StateTestCompleted,"Test case not ran.")
+	UnitTest:AssertFalse(CombinedStateTestCompleted,"Test case ran.")
+	
+	--Assert the subtests are correct.
+	UnitTest:AssertEquals(#CuT.SubTests,1,"Subtests count is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test","\"Describe\" name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Skipped,"\"Describe\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Skipped,"\"Describe\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests,2,"\"Describe\" subtests is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].Name,"state should be in progress","\"It\" name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].State,NexusUnitTestingProject.TestState.Skipped,"\"It\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Skipped,"\"It\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[1].SubTests,0,"\"It\" has subtets.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].Name,"combined state should be in progress")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].State,NexusUnitTestingProject.TestState.Skipped,"\"It\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].CombinedState,NexusUnitTestingProject.TestState.Skipped,"\"It\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[2].SubTests,0,"\"It\" has subtets.")
+end)
+
+--[[
+Tests the RunTest method with a skipping TestEZ test.
+--]]
+NexusUnitTesting:RegisterUnitTest("RunTestTestEZSkippedTest",function(UnitTest)
+	--Create the component under testing.
+	local CuT = UnitTestClass.new("TestName")
+	
+	--Set up the methods.
+	local SetupRun,TestRun,TeardownRun = false,false,false
+	local StateTestCompleted,CombinedStateTestCompleted = false,false
+	function CuT:Setup()
+		SetupRun = true
+		UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+	end
+	
+	function CuT:Run()
+		TestRun = true
+		
+		--Get the TestEZ methods from the environment to prevent Script Analysis from showing problems.
+		local describe = getfenv().describe
+		local it = getfenv().it
+		local xit = getfenv().xit
+		
+		--Describe the test.
+		describe("Test",function()
+			xit("state should be in progress", function()
+				local expect = getfenv().expect
+				expect(self.State).to.equal(NexusUnitTestingProject.TestState.InProgress)
+				StateTestCompleted = true
+			end)
+			
+			it("combined state should be in progress", function()
+				local expect = getfenv().expect
+				expect(self.CombinedState).to.equal(NexusUnitTestingProject.TestState.InProgress)
+				CombinedStateTestCompleted = true
+			end)
+		end)
+	end
+	
+	function CuT:Teardown()
+		TeardownRun = true
+		UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+	end
+	
+	--Run the test and assert the states are correct.
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
+	CuT:RunTest()
+	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.Passed,"Test not passed.")
+	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.Skipped,"Test not passed.")
+	UnitTest:AssertTrue(SetupRun,"Setup not ran.")
+	UnitTest:AssertTrue(TestRun,"Test not ran.")
+	UnitTest:AssertTrue(TeardownRun,"Teardown not ran.")
+	UnitTest:AssertFalse(StateTestCompleted,"Test case not ran.")
+	UnitTest:AssertTrue(CombinedStateTestCompleted,"Test case ran.")
+	
+	--Assert the subtests are correct.
+	UnitTest:AssertEquals(#CuT.SubTests,1,"Subtests count is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test","\"Describe\" name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Passed,"\"Describe\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Skipped,"\"Describe\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests,2,"\"Describe\" subtests is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].Name,"state should be in progress","\"It\" name is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].State,NexusUnitTestingProject.TestState.Skipped,"\"It\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Skipped,"\"It\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[1].SubTests,0,"\"It\" has subtets.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].Name,"combined state should be in progress")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].State,NexusUnitTestingProject.TestState.Passed,"\"It\" state is incorrect.")
+	UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].CombinedState,NexusUnitTestingProject.TestState.Passed,"\"It\" combined state is incorrect.")
+	UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[2].SubTests,0,"\"It\" has subtets.")
+end)
+
+--[[
 Tests the chain setters.
 --]]
 NexusUnitTesting:RegisterUnitTest("ChainedSetters",function(UnitTest)
