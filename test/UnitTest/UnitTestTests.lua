@@ -626,22 +626,25 @@ NexusUnitTesting:RegisterUnitTest("ChainedSetters",function(UnitTest)
 		SetupRun = true
 		UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.InProgress)
 		UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(getfenv().TestOverride,4)
 	end
 	
 	local function Run(CuT)
 		TestRun = true
 		UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.InProgress)
 		UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(getfenv().TestOverride,4)
 	end
 	
 	local function Teardown(CuT)
 		TeardownRun = true
 		UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.InProgress)
 		UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.InProgress)
+		UnitTest:AssertEquals(getfenv().TestOverride,4)
 	end
 	
 	--Set the test and assert it runs correctly.
-	CuT:SetSetup(Setup):SetRun(Run):SetTeardown(Teardown)
+	CuT:SetSetup(Setup):SetRun(Run):SetTeardown(Teardown):SetEnvironmentOverride("TestOverride",4)
 	UnitTest:AssertEquals(CuT.State,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
 	UnitTest:AssertEquals(CuT.CombinedState,NexusUnitTestingProject.TestState.NotRun,"Test initially not run.")
 	CuT:RunTest()

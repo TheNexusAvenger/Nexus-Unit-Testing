@@ -83,8 +83,8 @@ function UnitTest:AddTestEZOverrides()
 	local Environment = TestPlanner.createEnvironment(PlanBuilder)
 	
 	--Add the methods.
-	for Key,Value in pairs(Environment) do
-		self.Overrides[Key] = Value
+	for Name,Value in pairs(Environment) do
+		self:SetEnvironmentOverride(Name,Value)
 	end
 end
 
@@ -343,6 +343,16 @@ function UnitTest:RunSubtests()
 		--Update the state.
 		self:UpdateCombinedState()
 	end
+end
+
+--[[
+Sets an environment override for the methods
+in the test.
+Can be chained with other methods (Object:Method1(...):Method2(...)...)
+--]]
+function UnitTest:SetEnvironmentOverride(Name,Value)
+	self.Overrides[Name] = Value
+	return self
 end
 
 --[[
