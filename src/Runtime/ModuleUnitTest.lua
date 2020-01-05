@@ -6,7 +6,6 @@ Controls the unit tests of a ModuleScript.
 
 local NexusUnitTesting = require(script.Parent.Parent:WaitForChild("NexusUnitTestingProject"))
 local UnitTest = NexusUnitTesting:GetResource("UnitTest.UnitTest")
-local TestEZ = NexusUnitTesting:GetResource("TestEZ")
 
 local ModuleUnitTest = UnitTest:Extend()
 ModuleUnitTest:SetClassName("ModuleUnitTest")
@@ -34,12 +33,8 @@ function ModuleUnitTest:Run()
 		--Return an override for NexusUnitTesting or TestEZ
 		if Module == "NexusUnitTesting" then
 			return self
-		elseif Module == "TestEZ" then
-			return TestEZ
 		elseif Module.Name == "NexusUnitTesting" then
 			return self
-		elseif Module.Name == "TestEZ" then
-			return TestEZ
 		end
 		
 		--Return the base require.
