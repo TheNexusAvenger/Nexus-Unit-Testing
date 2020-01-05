@@ -154,10 +154,15 @@ end
 Wraps the environments of a given method for test
 framework specific things logging.
 --]]
-function UnitTest:WrapEnvironment(Method)
+function UnitTest:WrapEnvironment(Method,Overrides)
+	--Add the overrides.
+	Overrides = Overrides or {}
+	for Key,Value in pairs(self.Overrides) do
+		Overrides[Key] = Value
+	end
+	
 	--Set the environment.
 	local BaseEnvironment = getfenv()
-	local Overrides = self.Overrides
 	setfenv(Method,setmetatable({},{
 		__index = function(_,Index)
 			--Return an override.

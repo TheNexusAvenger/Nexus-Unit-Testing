@@ -52,6 +52,10 @@ function ModuleUnitTest:Run()
 	
 	--Call the function if a function was returend (used by TestEZ)
 	if type(TestReturn) == "function" then
+		self:WrapEnvironment(TestReturn,{
+			["script"] = self.ModuleScript,
+			["require"] = EnvironmentOverrides["require"],
+		})
 		TestReturn()
 	end
 end
