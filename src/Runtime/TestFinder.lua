@@ -55,8 +55,8 @@ function Runner.ScriptContainsTests(ScriptSource)
 			end
 		end
 		
-		--Return true if the requrie contains NexusUnitTesting or TestEZ.
-		if string.find(CurrentRequire,"[^%w]NexusUnitTesting[^%w]") or string.find(CurrentRequire,"[^%w]TestEZ[^%w]") then
+		--Return true if the requrie contains NexusUnitTesting.
+		if string.find(CurrentRequire,"[^%w]NexusUnitTesting[^%w]") then
 			return true
 		end
 	end

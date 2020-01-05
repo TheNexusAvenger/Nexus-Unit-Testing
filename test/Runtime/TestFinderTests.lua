@@ -19,9 +19,7 @@ NexusUnitTesting:RegisterUnitTest("ScriptContainsTests",function(UnitTest)
 	UnitTest:AssertFalse(TestFinder.ScriptContainsTests("print(\"Not a test\")"),"Script without require registers as test.")
 	UnitTest:AssertFalse(TestFinder.ScriptContainsTests("require(game.Workspace:WaitForChild(\"Module\"))"),"Script with random require registers as test.")
 	UnitTest:AssertFalse(TestFinder.ScriptContainsTests("local NexusUnitTesting = true"),"Script with NexusUnitTesting as varaibles registers as test.")
-	UnitTest:AssertFalse(TestFinder.ScriptContainsTests("local TestEZ = 5"),"Script with TestEZ as varaibles registers as test.")
 	UnitTest:AssertFalse(TestFinder.ScriptContainsTests("require(game.Workspace.NexusUnitTestingFork)"),"Script with non-Nexus Unit Testing require registers as test.")
-	UnitTest:AssertFalse(TestFinder.ScriptContainsTests("require(game.Workspace.TestEZFork)"),"Script with non-TestEZ require registers as test.")
 	
 	--Assert that unit test scripts return true.
 	UnitTest:AssertTrue(TestFinder.ScriptContainsTests("require(\"NexusUnitTesting\")"),"NexusUnitTesting test not detected.")
@@ -29,9 +27,6 @@ NexusUnitTesting:RegisterUnitTest("ScriptContainsTests",function(UnitTest)
 	UnitTest:AssertTrue(TestFinder.ScriptContainsTests("require(game.TestService.NexusUnitTesting)"),"NexusUnitTesting test not detected.")
 	UnitTest:AssertTrue(TestFinder.ScriptContainsTests("require(game.TestService:WaitForChild(\"NexusUnitTesting\")"),"NexusUnitTesting test not detected.")
 	UnitTest:AssertTrue(TestFinder.ScriptContainsTests("require(game.Workspace.Module) require(game.TestService:WaitForChild(\"NexusUnitTesting\")"),"NexusUnitTesting test with other module not detected.")
-	UnitTest:AssertTrue(TestFinder.ScriptContainsTests("require(\"TestEZ\")"),"TestEZ test not detected.")
-	UnitTest:AssertTrue(TestFinder.ScriptContainsTests("require(game.TestService.TestEZ)"),"TestEZ test not detected.")
-	UnitTest:AssertTrue(TestFinder.ScriptContainsTests("require(game.TestService:WaitForChild(\"TestEZ\")"),"TestEZ test not detected.")
 end)
 	
 --[[
@@ -47,7 +42,7 @@ NexusUnitTesting:RegisterUnitTest("GetTests",function(UnitTest)
 	Module1.Parent = Folder
 	local Module2 = Instance.new("ModuleScript")
 	Module2.Name = "Module2"
-	Module2.Source = "local TestEZ = require(\"TestEZ\") return true"
+	Module2.Source = "local NexusUnitTesting = require(\"NexusUnitTesting\") return true"
 	Module2.Parent = Folder
 	local Module3 = Instance.new("ModuleScript")
 	Module3.Name = "Module3"
