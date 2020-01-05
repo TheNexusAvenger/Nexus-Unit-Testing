@@ -98,7 +98,7 @@ function ModuleSandbox:RequireModule(Module,EnvironmentOverrides)
 	--Modify the source.
 	local ClonedModule = Module:Clone()
 	_G[ClonedModule] = Environment
-	ClonedModule.Source = "local function Load()\n"..ClonedModule.Source.."\nend\n\nsetfenv(Load,_G[script])\n_G[script] = nil\nreturn Load()"
+	ClonedModule.Source = "local function Load() "..ClonedModule.Source.."\nend\n\nsetfenv(Load,_G[script])\n_G[script] = nil\nreturn Load()"
 	
 	--Require the module.
 	local BaseRequire = getfenv()["BaseRequire"]

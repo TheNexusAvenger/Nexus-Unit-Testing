@@ -57,13 +57,18 @@ NexusUnitTesting:RegisterUnitTest("GetTests",function(UnitTest)
 	Module4.Name = "Module4"
 	Module4.Source = "local NexusUnitTesting = require(\"NexusUnitTestingFork\") return true"
 	Module4.Parent = Module2
+	local Module5 = Instance.new("ModuleScript")
+	Module5.Name = "Module5.spec"
+	Module5.Source = "return function() end"
+	Module5.Parent = Module2
 	
 	--Assert the tests are correct.
 	local Tests = TestFinder.GetTests(Folder)
-	UnitTest:AssertEquals(#Tests,3,"Tests count is incorrect.")
+	UnitTest:AssertEquals(#Tests,4,"Tests count is incorrect.")
 	UnitTest:AssertEquals(Tests[1].Name,"Folder.Module1","Name is incorrectt.")
 	UnitTest:AssertEquals(Tests[2].Name,"Folder.Module2","Name is incorrectt.")
 	UnitTest:AssertEquals(Tests[3].Name,"Folder.Module2.Module3","Name is incorrectt.")
+	UnitTest:AssertEquals(Tests[4].Name,"Folder.Module2.Module5.spec","Name is incorrectt.")
 end)
 
 

@@ -77,7 +77,7 @@ function Runner.GetTests(Container)
 	local Tests = {}
 	for _,Module in pairs(Container:GetDescendants()) do
 		pcall(function()
-			if Module:IsA("ModuleScript") and Runner.ScriptContainsTests(Module.Source) then
+			if Module:IsA("ModuleScript") and (Module.Name:match("%.spec$") or Runner.ScriptContainsTests(Module.Source)) then
 				table.insert(Tests,ModuleUnitTest.new(Module))
 			end
 		end)

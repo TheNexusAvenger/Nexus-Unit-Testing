@@ -6,7 +6,7 @@ Tests the ModuleSandbox class.
 
 local NexusUnitTesting = require("NexusUnitTesting")
 
-local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"))
+local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("NexusUnitTestingProject"))
 local ModuleSandbox = NexusUnitTestingProject:GetResource("UnitTest.ModuleSandbox")
 
 

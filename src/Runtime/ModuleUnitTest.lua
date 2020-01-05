@@ -5,8 +5,8 @@ Controls the unit tests of a ModuleScript.
 --]]
 
 local NexusUnitTesting = require(script.Parent.Parent:WaitForChild("NexusUnitTestingProject"))
-local NexusInstance = NexusUnitTesting:GetResource("NexusInstance.NexusInstance")
 local UnitTest = NexusUnitTesting:GetResource("UnitTest.UnitTest")
+local TestEZ = NexusUnitTesting:GetResource("TestEZ")
 
 local ModuleUnitTest = UnitTest:Extend()
 ModuleUnitTest:SetClassName("ModuleUnitTest")
@@ -27,7 +27,7 @@ end
 Runs the test.
 If the setup fails, the test is not continued.
 --]]
-function UnitTest:Run()
+function ModuleUnitTest:Run()
 	--Create the environment overrides.
 	local EnvironmentOverrides = {}
 	EnvironmentOverrides["require"] = function(Module)
@@ -35,9 +35,11 @@ function UnitTest:Run()
 		if Module == "NexusUnitTesting" then
 			return self
 		elseif Module == "TestEZ" then
-			error("TestEZ is unsupported for now")
+			return TestEZ
+		elseif Module.Name == "NexusUnitTesting" then
+			return self
 		elseif Module.Name == "TestEZ" then
-			error("TestEZ is unsupported for now")
+			return TestEZ
 		end
 		
 		--Return the base require.
