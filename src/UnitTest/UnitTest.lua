@@ -147,6 +147,7 @@ function UnitTest:OutputMessage(Type,...)
 	end
 	
 	--Invoke the event.
+	table.insert(self.Output,{Message,Type})
 	self.MessageOutputted:Fire(Message,Type)
 end
 
