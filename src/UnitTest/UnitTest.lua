@@ -466,6 +466,8 @@ end
 Runs an assertion. Displays a message as an error if it fails.
 --]]
 function UnitTest:Assert(Function,Message)
+	self:StopAssertionIfCompleted()
+	
 	--Run the unit test to see if the result is expected.
 	local ResultExpected = Function()
 	
