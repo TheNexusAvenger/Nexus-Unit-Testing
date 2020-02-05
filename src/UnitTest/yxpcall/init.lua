@@ -15,7 +15,7 @@ local CurrentErrorStackTrace
 local ErrorThrownEvent = require(script.Parent.Parent:WaitForChild("NexusInstance"):WaitForChild("Event"):WaitForChild("LuaEvent")).new()
 local RunnerBase = script:WaitForChild("Runner")
 local MessageError,MessageInfo = Enum.MessageType.MessageError,Enum.MessageType.MessageInfo
-
+local InactiveRunners = {}
 
 
 --Set up the logging to get full stack traces.
@@ -44,13 +44,32 @@ end)
 
 
 --[[
+Returns a runner for the given scripts.
+If no runner is open, creates a new one.
+--]]
+local function GetRunner()
+	--Return an existing runner if one exists.
+	if #InactiveRunners >= 1 then
+		local Runner = InactiveRunners[#InactiveRunners]
+		table.remove(InactiveRunners,#InactiveRunners)
+		return Runner
+	end
+	
+	--Create a new runner.
+	local NewRunner = RunnerBase:Clone()
+	NewRunner.Name = HttpService:GenerateGUID()
+	return NewRunner
+end
+
+
+
+--[[
 Custom implementation of a yieldable xpcall for Roblox.
 --]]
 local function yxpcall(Function,ErrorHandler,...)
 	--Create the runner.
-	local UniqueId = HttpService:GenerateGUID()
-	local NewRunner = RunnerBase:Clone()
-	NewRunner.Name = UniqueId
+	local NewRunner = GetRunner()
+	local UniqueId = NewRunner.Name
 	
 	--Set up the runner.
 	local Runner = require(NewRunner)
@@ -91,9 +110,13 @@ local function yxpcall(Function,ErrorHandler,...)
 	Disconnects the events.
 	--]]
 	local function DisconnectEvents()
+		--Disconnect the events.
 		ErrorConnection:Disconnect()
 		BindableIn:Destroy()
 		BindableOut:Destroy()
+		
+		--Re-add the runner.
+		table.insert(InactiveRunners,NewRunner)
 	end
 	
 	--[[

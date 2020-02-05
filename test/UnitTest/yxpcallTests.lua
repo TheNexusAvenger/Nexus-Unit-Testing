@@ -52,8 +52,6 @@ end)
 --[[
 Tests an error being thrown.
 --]]
---[[
---Test is disabled for performance reasons until the new plugin is created
 NexusUnitTesting:RegisterUnitTest("ErrorThrown",function(UnitTest)
 	--Call yxpcall with arguments.
 	local CalledError,CalledStackTrace
@@ -68,13 +66,65 @@ NexusUnitTesting:RegisterUnitTest("ErrorThrown",function(UnitTest)
 	UnitTest:AssertNotNil(string.find(CalledError,"Test error"),"Error message doesn't contain the thrown error.")
 	UnitTest:AssertNotNil(string.find(CalledStackTrace,"yxpcallTests"),"Error stack trace doesn't contain the script.")
 end)
-]]
+
+--[[
+Tests an error being thrown.
+--]]
+NexusUnitTesting:RegisterUnitTest("ErrorThrown",function(UnitTest)
+	--Call yxpcall with arguments.
+	local CalledError,CalledStackTrace
+	local Worked = yxpcall(function()
+		error("Test error")
+	end,function(Error,StackTrace)
+		CalledError,CalledStackTrace = Error,StackTrace
+	end)
+	
+	--Assert the results are correct.
+	UnitTest:AssertFalse(Worked,"Worked result is incorrect.")
+	UnitTest:AssertNotNil(string.find(CalledError,"Test error"),"Error message doesn't contain the thrown error.")
+	UnitTest:AssertNotNil(string.find(CalledStackTrace,"yxpcallTests"),"Error stack trace doesn't contain the script.")
+end)
+
+--[[
+Tests an 2 errors being thrown concurrently.
+--]]
+NexusUnitTesting:RegisterUnitTest("ConcurrentErrorThrown",function(UnitTest)
+	--Call yxpcall with arguments.
+	local Worked1,Worked2
+	local CalledError1,CalledStackTrace1
+	local CalledError2,CalledStackTrace2
+	spawn(function()
+		Worked1 = yxpcall(function()
+			wait(0.1)
+			error("Test error 1")
+		end,function(Error,StackTrace)
+			CalledError1,CalledStackTrace1 = Error,StackTrace
+		end)
+	end)
+	spawn(function()
+		Worked2 = yxpcall(function()
+			wait(0.1)
+			error("Test error 2")
+		end,function(Error,StackTrace)
+			CalledError2,CalledStackTrace2 = Error,StackTrace
+		end)
+	end)
+	
+	--Assert the results are correct.
+	wait(0.2)
+	UnitTest:AssertFalse(Worked1,"Worked result is incorrect.")
+	UnitTest:AssertFalse(Worked2,"Worked result is incorrect.")
+	UnitTest:AssertNotNil(string.find(CalledError1,"Test error 1"),"Error message doesn't contain the thrown error.")
+	UnitTest:AssertNotNil(string.find(CalledStackTrace1,"yxpcallTests"),"Error stack trace doesn't contain the script.")
+	UnitTest:AssertNotNil(string.find(CalledError2,"Test error 2"),"Error message doesn't contain the thrown error.")
+	UnitTest:AssertNotNil(string.find(CalledStackTrace2,"yxpcallTests"),"Error stack trace doesn't contain the script.")
+end)
 
 --[[
 Tests a stack overflow error being thrown.
 --]]
 --[[
---Test is disabled for performance reasons until the new plugin is created
+--Test is disabled for performance reasons
 NexusUnitTesting:RegisterUnitTest("StackOverflow",function(UnitTest)
 	--Method that throws stack overflow.
 	local function StackOverflow()
