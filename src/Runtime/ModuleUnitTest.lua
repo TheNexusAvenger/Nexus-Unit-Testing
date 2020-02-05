@@ -29,6 +29,7 @@ If the setup fails, the test is not continued.
 function ModuleUnitTest:Run()
 	--Create the environment overrides.
 	local EnvironmentOverrides = {}
+	EnvironmentOverrides["plugin"] = plugin
 	EnvironmentOverrides["require"] = function(Module)
 		--Return an override for NexusUnitTesting or TestEZ
 		if Module == "NexusUnitTesting" then
