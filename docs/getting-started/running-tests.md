@@ -28,5 +28,8 @@ Lemur has not been tested with Nexus Unit Testing. TestEZ
 is used with Lemur projects and should be used instead.
 
 ## Roblox Studio Plugin
-The plugin has not been released yet. Information will
-updated when the plugin is public.
+Nexus Unit Testing Plugin can be found from the
+[Roblox Plugin Marketplace](https://www.roblox.com/library/4735386072/Nexus-Unit-Testing-Plugin)
+as well as [GitHub](https://github.com/TheNexusAvenger/Nexus-Unit-Testing-Plugin).
+It provides a graphical user interface for running
+tests and viewing the output of individual tests.
