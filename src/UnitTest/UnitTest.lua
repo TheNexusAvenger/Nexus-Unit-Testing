@@ -332,7 +332,9 @@ function UnitTest:RunSubtests()
 		--Run the subtests to get the tests.
 		for _,Test in pairs(self.SubTests) do
 			if Test.State == NexusUnitTesting.TestState.NotRun then
-				Test:RunTest()
+				coroutine.wrap(function()
+					Test:RunTest()
+				end)()
 			end
 		end
 		
