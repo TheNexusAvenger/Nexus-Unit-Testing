@@ -334,6 +334,7 @@ function UnitTest:RunSubtests()
 			if Test.State == NexusUnitTesting.TestState.NotRun then
 				coroutine.wrap(function()
 					Test:RunTest()
+					self:UpdateCombinedState()
 				end)()
 			end
 		end
