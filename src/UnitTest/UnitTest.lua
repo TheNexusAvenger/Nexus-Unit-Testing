@@ -85,7 +85,7 @@ function UnitTest:AddTestEZOverrides()
 	local Environment = TestPlanner.createEnvironment(PlanBuilder)
 	
 	--Add the methods.
-	for Name,Value in ipairs(Environment) do
+	for Name,Value in pairs(Environment) do
 		self:SetEnvironmentOverride(Name,Value)
 	end
 end
@@ -491,7 +491,7 @@ Asserts that two objects are equal. Special cases are handles for
 objects like arrays that may have the same elements. Not intended
 to be used on Roblox Instances.
 --]]
-function UnitTest:AssertEquals(ExpectedObject,ActualObject,Message)
+function UnitTest:AssertEquals(ActualObject,ExpectedObject,Message)
 	--Set up the message.
 	if not Message then
 		Message = "Two objects aren't equal."
@@ -518,7 +518,7 @@ end
 Asserts that two objects aren't equal. Special cases are handles for
 objects like arrays that may have the same elements.
 --]]
-function UnitTest:AssertNotEquals(ExpectedObject,ActualObject,Message)
+function UnitTest:AssertNotEquals(ActualObject,ExpectedObject,Message)
 	--Set up the message.
 	if not Message then
 		Message = "Two objects are equal."
@@ -545,7 +545,7 @@ end
 Asserts that two objects are the same. This is mainly used for testing
 if a new array or instance isn't created.
 --]]
-function UnitTest:AssertSame(ExpectedObject,ActualObject,Message)
+function UnitTest:AssertSame(ActualObject,ExpectedObject,Message)
 	--Set up the message.
 	if not Message then
 		Message = "Two objects aren't the same."
@@ -565,7 +565,7 @@ end
 Asserts that two objects aren't the same. This is mainly used for testing
 if a new array or instance isn't created.
 --]]
-function UnitTest:AssertNotSame(ExpectedObject,ActualObject,Message)
+function UnitTest:AssertNotSame(ActualObject,ExpectedObject,Message)
 	--Set up the message.
 	if not Message then
 		Message = "Two objects are the same."
@@ -585,7 +585,7 @@ end
 Asserts that two objects are within a given Epsilon of each other. If
 the message is used in place of the Epsilon, 0.001 will be used.
 --]]
-function UnitTest:AssertClose(ExpectedObject,ActualObject,Epsilon,Message)
+function UnitTest:AssertClose(ActualObject,ExpectedObject,Epsilon,Message)
 	--Set the message as the epsilon if needed.
 	if type(Epsilon) == "string" and Message == nil then
 		Message = Epsilon
@@ -623,7 +623,7 @@ end
 Asserts that two objects aren't within a given Epsilon of each other. If
 the message is used in place of the Epsilon, 0.001 will be used.
 --]]
-function UnitTest:AssertNotClose(ExpectedObject,ActualObject,Epsilon,Message)
+function UnitTest:AssertNotClose(ActualObject,ExpectedObject,Epsilon,Message)
 	--Set the message as the epsilon if needed.
 	if type(Epsilon) == "string" and Message == nil then
 		Message = Epsilon
