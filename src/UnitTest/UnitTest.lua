@@ -50,9 +50,11 @@ function UnitTest:__new(Name)
 	--Store the overrides.
 	self.Overrides = {
 		["print"] = function(...)
+			NexusUnitTesting.BasePrint(...)
 			self:OutputMessage(Enum.MessageType.MessageOutput,...)
 		end,
 		["warn"] = function(...)
+			NexusUnitTesting.BaseWarn(...)
 			self:OutputMessage(Enum.MessageType.MessageWarning,...)
 		end,
 		["BaseRequire"] = require,
@@ -115,6 +117,9 @@ end
 Outputs a message for the server.
 --]]
 function UnitTest:OutputMessage(Type,...)
+	if self.CurSubTest then
+		return self.CurSubTest:OutputMessage(Type, ...)
+	end
 	local Message = ""
 	
 	--Get the elements and count. Handle cases of parameters ending in nil.
@@ -185,7 +190,7 @@ function UnitTest:RegisterUnitTest(NewUnitTest,Function)
 	--Create a unit test if the unit test is a string and the function exists (backwards compatibility).
 	if typeof(NewUnitTest) == "string" then
 		NewUnitTest = UnitTest.new(NewUnitTest)
-		NewUnitTest:SetSetup(Function)
+		NewUnitTest:SetRun(Function)
 	end
 	
 	--Add the unit test.
@@ -332,17 +337,18 @@ function UnitTest:RunSubtests()
 		--Run the subtests to get the tests.
 		for _,Test in pairs(self.SubTests) do
 			if Test.State == NexusUnitTesting.TestState.NotRun then
-				coroutine.wrap(function()
-					Test:RunTest()
-					self:UpdateCombinedState()
-				end)()
+				self.CurSubTest = Test
+				Test:RunTest()
+				self:UpdateCombinedState()
 			end
 		end
-		
+
 		--Run the subtests' subtests.
 		for _,Test in pairs(self.SubTests) do
+			self.CurSubTest = Test
 			Test:RunSubtests()
 		end
+		self.CurSubTest = nil
 		
 		--Update the state.
 		self:UpdateCombinedState()

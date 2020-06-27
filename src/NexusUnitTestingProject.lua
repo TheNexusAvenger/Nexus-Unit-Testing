@@ -18,7 +18,8 @@ NexusUnitTestingProject.TestState.Failed = "FAILED"
 NexusUnitTestingProject.TestState.Skipped = "SKIPPED"
 
 
-
+NexusUnitTestingProject.BasePrint = print
+NexusUnitTestingProject.BaseWarn = warn
 
 --Return the project.
 return NexusUnitTestingProject

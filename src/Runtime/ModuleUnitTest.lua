@@ -42,11 +42,11 @@ function ModuleUnitTest:Run()
 		return self.Sandbox:RequireModule(Module,EnvironmentOverrides)
 	end
 	EnvironmentOverrides["print"] = function(...)
-		print(...)
+		NexusUnitTesting.BasePrint(...)
 		self:OutputMessage(Enum.MessageType.MessageOutput,...)
 	end
 	EnvironmentOverrides["warn"] = function(...)
-		warn(...)
+		NexusUnitTesting.BaseWarn(...)
 		self:OutputMessage(Enum.MessageType.MessageWarning,...)
 	end
 	
