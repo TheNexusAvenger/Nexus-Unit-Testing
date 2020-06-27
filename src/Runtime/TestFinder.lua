@@ -75,7 +75,7 @@ function Runner.GetTests(Container)
 	
 	--Get all the tests in the game.
 	local Tests = {}
-	for _,Module in pairs(Container:GetDescendants()) do
+	for _,Module in ipairs(Container:GetDescendants()) do
 		pcall(function()
 			if Module:IsA("ModuleScript") and (Module.Name:match("%.spec$") or Runner.ScriptContainsTests(Module.Source)) then
 				table.insert(Tests,ModuleUnitTest.new(Module))

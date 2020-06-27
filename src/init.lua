@@ -40,13 +40,13 @@ function NexusUnitTesting.RunTests(Container)
 		end
 		
 		--Run the subtests.
-		for _,SubTest in pairs(Test.SubTests) do
+		for _,SubTest in ipairs(Test.SubTests) do
 			RunTest(SubTest,TestName.." > ")
 		end
 	end
 	
 	--Run the tests.
-	for _,Test in pairs(Tests) do
+	for _,Test in ipairs(Tests) do
 		RunTest(Test,"")
 	end
 	
@@ -54,13 +54,13 @@ function NexusUnitTesting.RunTests(Container)
 	print("")
 	if #SkippedTests ~= 0 then
 		print("Skipped tests:")
-		for _,TestName in pairs(SkippedTests) do
+		for _,TestName in ipairs(SkippedTests) do
 			print("\t"..TestName)
 		end
 	end
 	if #FailedTests ~= 0 then
 		print("Failed tests:")
-		for _,TestName in pairs(FailedTests) do
+		for _,TestName in ipairs(FailedTests) do
 			print("\t"..TestName)
 		end
 	end

@@ -85,7 +85,7 @@ function UnitTest:AddTestEZOverrides()
 	local Environment = TestPlanner.createEnvironment(PlanBuilder)
 	
 	--Add the methods.
-	for Name,Value in pairs(Environment) do
+	for Name,Value in ipairs(Environment) do
 		self:SetEnvironmentOverride(Name,Value)
 	end
 end
@@ -231,7 +231,7 @@ function UnitTest:BaseRunTest()
 			end
 			
 			--Visit the child nodes.
-			for _,ChildNode in pairs(Node.children) do
+			for _,ChildNode in ipairs(Node.children) do
 				VisitChildNode(ChildNode,NewTest)
 			end
 			
@@ -239,14 +239,14 @@ function UnitTest:BaseRunTest()
 			NewTest:UpdateCombinedState()
 			
 			--Output the error(s).
-			for _,Error in pairs(Node.errors) do
+			for _,Error in ipairs(Node.errors) do
 				self:OutputMessage(Enum.MessageType.MessageError,string.split(Error,"\n",1)[1])
 				self:OutputMessage(Enum.MessageType.MessageInfo,Error)
 			end
 		end
 		
 		--Visit the children.
-		for _,ChildNode in pairs(TestEZResults.children) do
+		for _,ChildNode in ipairs(TestEZResults.children) do
 			VisitChildNode(ChildNode,self)
 		end
 	end
@@ -335,7 +335,7 @@ function UnitTest:RunSubtests()
 		self.CombinedState = NexusUnitTesting.TestState.InProgress
 		
 		--Run the subtests to get the tests.
-		for _,Test in pairs(self.SubTests) do
+		for _,Test in ipairs(self.SubTests) do
 			if Test.State == NexusUnitTesting.TestState.NotRun then
 				self.CurSubTest = Test
 				Test:RunTest()
@@ -344,7 +344,7 @@ function UnitTest:RunSubtests()
 		end
 
 		--Run the subtests' subtests.
-		for _,Test in pairs(self.SubTests) do
+		for _,Test in ipairs(self.SubTests) do
 			self.CurSubTest = Test
 			Test:RunSubtests()
 		end
@@ -400,7 +400,7 @@ function UnitTest:UpdateCombinedState()
 	local CombinedState = self.State
 	
 	--Set the state based on the tests.
-	for _,Test in pairs(self.SubTests) do
+	for _,Test in ipairs(self.SubTests) do
 		local TestState = Test.CombinedState
 		if UNIT_TEST_STATE_PRIORITY[TestState] > UNIT_TEST_STATE_PRIORITY[CombinedState] then
 			CombinedState = TestState
@@ -496,7 +496,7 @@ function UnitTest:AssertEquals(ExpectedObject,ActualObject,Message)
 	if not Message then
 		Message = "Two objects aren't equal."
 	end
-	local Comparison = "\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
+	local Comparison = "\n\tExpected: "..tostring(ExpectedObject).."\n\tActual: "..tostring(ActualObject)
 	Message = Message..Comparison
 	
 	--Set up the function.
@@ -523,7 +523,7 @@ function UnitTest:AssertNotEquals(ExpectedObject,ActualObject,Message)
 	if not Message then
 		Message = "Two objects are equal."
 	end
-	local Comparison = "\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
+	local Comparison = "\n\tExpected: "..tostring(ExpectedObject).."\n\tActual: "..tostring(ActualObject)
 	Message = Message..Comparison
 	
 	--Set up the function.
@@ -550,7 +550,7 @@ function UnitTest:AssertSame(ExpectedObject,ActualObject,Message)
 	if not Message then
 		Message = "Two objects aren't the same."
 	end
-	Message = Message.."\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
+	Message = Message.."\n\tExpected: "..tostring(ExpectedObject).."\n\tActual: "..tostring(ActualObject)
 	
 	--Set up the function.
 	local function Assert()
@@ -570,7 +570,7 @@ function UnitTest:AssertNotSame(ExpectedObject,ActualObject,Message)
 	if not Message then
 		Message = "Two objects are the same."
 	end
-	Message = Message.."\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
+	Message = Message.."\n\tExpected: "..tostring(ExpectedObject).."\n\tActual: "..tostring(ActualObject)
 	
 	--Set up the function.
 	local function Assert()
@@ -596,7 +596,7 @@ function UnitTest:AssertClose(ExpectedObject,ActualObject,Epsilon,Message)
 	if not Message then
 		Message = "Two objects aren't close."
 	end
-	local Comparison = "\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
+	local Comparison = "\n\tExpected: "..tostring(ExpectedObject).."\n\tActual: "..tostring(ActualObject)
 	Message = Message..Comparison
 	
 	--Set up the function.
@@ -634,7 +634,7 @@ function UnitTest:AssertNotClose(ExpectedObject,ActualObject,Epsilon,Message)
 	if not Message then
 		Message = "Two objects aren't close."
 	end
-	local Comparison = "\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
+	local Comparison = "\n\tExpected: "..tostring(ExpectedObject).."\n\tActual: "..tostring(ActualObject)
 	Message = Message..Comparison
 	
 	--Set up the function.
