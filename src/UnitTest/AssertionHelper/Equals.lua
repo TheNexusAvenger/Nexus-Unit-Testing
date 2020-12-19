@@ -4,17 +4,15 @@ TheNexusAvenger
 Helper function for determining if two userdata objects are equal.
 --]]
 
-
-
 --[[
 Returns if two user data are equal.
 --]]
 local function Equals(Object1,Object2,CheckedValues)
 	--Create the checked values table if it doesn't exist.
 	if not CheckedValues then
-		CheckedValues = {}
+		CheckedValues = { {}, {} }
 	end
-	
+
 	--[[
 	Performs a cyclic check and returns
 	if the equals method should continue.
@@ -24,18 +22,18 @@ local function Equals(Object1,Object2,CheckedValues)
 		if type(Value1) ~= "table" or type(Value2) ~= "table" then
 			return true
 		end
-		
+
 		--Return false if either value was already checked.
-		if CheckedValues[Value1] or CheckedValues[Value2] then
+		if CheckedValues[1][Value1] or CheckedValues[2][Value2] then
 			return false
 		end
-		
+
 		--Store the values and return true (continue).
-		CheckedValues[Value1] = true
-		CheckedValues[Value2] = true
+		CheckedValues[1][Value1] = true
+		CheckedValues[2][Value2] = true
 		return true
 	end
-	
+
 	--If it is a table, check the keys and values being the same.
 	if type(Object1) == "table" and type(Object2) == "table" then
 		-- Check the tables.
@@ -56,19 +54,17 @@ local function Equals(Object1,Object2,CheckedValues)
 				end
 			end
 		end
-		
+
 		-- Clear the checked flag for the values
-		CheckedValues[Object1] = nil
-		CheckedValues[Object2] = nil
+		CheckedValues[1][Object1] = nil
+		CheckedValues[2][Object2] = nil
 
 		-- Return true (all equal).
 		return true
 	end
-	
+
 	--Return equality (base case)
 	return Object1 == Object2
 end
-
-
 
 return Equals

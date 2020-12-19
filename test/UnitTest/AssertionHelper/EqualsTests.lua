@@ -72,12 +72,12 @@ end)
 Tests the Equals function with relative cyclic values.
 --]]
 NexusUnitTesting:RegisterUnitTest("EqualsRelativeCyclic",function(UnitTest)
-	local Table1 = { 0, { 1, nil } } 
-	Table1[2][2] = Table1 -- Expands: { 0, { 1, |{0,{1,...}}| } }
-	local Table2 = { 0, { 1, nil } }
-	Table2[2][2] = Table2-- Expands: { 0, { 1, |{0,{1,...}}| } }
-	local Table3 = { 0, { 1, nil } }
-	Table3[2][2] = Table3[2] -- Expands: { 0, { 1, |{1,...}| } }
+	local Table1 = { 0, { 0, nil } }
+	Table1[2][2] = Table1 -- Expands: { 0, { 0, |{0,{0,...}}| } }
+	local Table2 = { 0, { 0, nil } }
+	Table2[2][2] = Table2 -- Expands: { 0, { 0, |{0,{0,...}}| } }
+	local Table3 = { 0, { 0, nil } }
+	Table3[2][2] = Table3[2] -- Expands: { 0, { 0, |{0,...}| } }
 
 	UnitTest:AssertTrue(Equals(Table1,Table2),"Tables with same values are different")
 	UnitTest:AssertFalse(Equals(Table1,Table3),"Tables with different values are equal")
