@@ -72,6 +72,18 @@ NexusUnitTesting:RegisterUnitTest("EqualsCyclicTables",function(UnitTest)
 	UnitTest:AssertFalse(Equals(Table1,Table3),"Tables with missing values are equal")
 end)
 
+--[[
+Tests the Equals function with already checked values.
+--]]
+NexusUnitTesting:RegisterUnitTest("EqualsCheckedTables",function(UnitTest)
+	local Table0 = { 0 }
+	local Table1 = { { 0 }, { 0 } }
+	local Table2 = { Table0, Table0 }
+	local Table3 = { { 0 }, { 1 } }
 
+	UnitTest:AssertTrue(Equals(Table1,Table2),"Tables with same values are different")
+	UnitTest:AssertFalse(Equals(Table1,Table3),"Tables with different values are equal")
+	UnitTest:AssertFalse(Equals(Table2,Table3),"Tables with different values are equal")
+end)
 
 return true

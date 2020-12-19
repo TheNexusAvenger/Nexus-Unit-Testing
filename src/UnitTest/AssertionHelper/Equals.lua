@@ -37,25 +37,31 @@ local function Equals(Object1,Object2,CheckedValues)
 	end
 	
 	--If it is a table, check the keys and values being the same.
-	if type(Object1) == "table" and type(Object2) == "table" and Object1 ~= Object2 then
-		--Check the tables.
-		for Key,Value in pairs(Object1) do
-			if PerformCyclicCheck(Value,Object2[Key]) then
-				if not Equals(Value,Object2[Key],CheckedValues) then
-					return false
+	if type(Object1) == "table" and type(Object2) == "table" then
+		-- Check the tables.
+		if Object1 ~= Object2 then
+			for Key, Value in pairs(Object1) do
+				if PerformCyclicCheck(Value, Object2[Key]) then
+					if not Equals(Value, Object2[Key], CheckedValues) then
+						return false
+					end
+				end
+			end
+
+			for Key, Value in pairs(Object2) do
+				if PerformCyclicCheck(Value, Object1[Key]) then
+					if not Equals(Value, Object1[Key], CheckedValues) then
+						return false
+					end
 				end
 			end
 		end
 		
-		for Key,Value in pairs(Object2) do
-			if PerformCyclicCheck(Value,Object1[Key]) then
-				if not Equals(Value,Object1[Key],CheckedValues) then
-					return false
-				end
-			end
-		end
-		
-		--Return true (all equal).
+		-- Clear the checked flag for the values
+		CheckedValues[Object1] = nil
+		CheckedValues[Object2] = nil
+
+		-- Return true (all equal).
 		return true
 	end
 	
