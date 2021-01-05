@@ -16,5 +16,5 @@ Both issues and pull requests are accepted for this project.
 More information can be found [here](docs/contributing.md).
 
 ## License
-Nexus Unit Testing is available under the terms of the Apache 
-Liscence 2.0. See [LICENSE](LICENSE) for details.
+Nexus Unit Testing is available under the terms of the MIT 
+License. See [LICENSE](LICENSE) for details.
