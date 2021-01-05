@@ -184,7 +184,7 @@ function UnitTest:RegisterUnitTest(NewUnitTest,Function)
 	--Create a unit test if the unit test is a string and the function exists (backwards compatibility).
 	if typeof(NewUnitTest) == "string" then
 		NewUnitTest = UnitTest.new(NewUnitTest)
-		NewUnitTest:SetSetup(Function)
+		NewUnitTest:SetRun(Function)
 	end
 	
 	--Add the unit test.
