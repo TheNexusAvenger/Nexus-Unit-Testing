@@ -7,7 +7,6 @@ Class representing a unit test.
 local NexusUnitTesting = require(script.Parent.Parent:WaitForChild("NexusUnitTestingProject"))
 local NexusInstance = NexusUnitTesting:GetResource("NexusInstance.NexusInstance")
 local NexusEventCreator = NexusUnitTesting:GetResource("NexusInstance.Event.NexusEventCreator")
-local yxpcall = NexusUnitTesting:GetResource("UnitTest.yxpcall")
 local ModuleSandbox = NexusUnitTesting:GetResource("UnitTest.ModuleSandbox")
 local Equals = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.Equals")
 local IsClose = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.IsClose")
@@ -276,7 +275,9 @@ function UnitTest:RunTest()
 	
 	--Run the setup.
 	coroutine.wrap(function()
-		yxpcall(function() self:Setup() end,function(ErrorMessage,StackTrace)
+		xpcall(function()
+			self:Setup()
+		end,function(ErrorMessage,StackTrace)
 			self:OutputMessage(Enum.MessageType.MessageError,ErrorMessage)
 			self:OutputMessage(Enum.MessageType.MessageInfo,StackTrace)
 			self.State = NexusUnitTesting.TestState.Failed
@@ -290,7 +291,9 @@ function UnitTest:RunTest()
 	--Run the test.
 	local TestWorked = true
 	coroutine.wrap(function()
-		TestWorked = yxpcall(function() self:BaseRunTest() end,function(ErrorMessage,StackTrace)
+		TestWorked = xpcall(function()
+			self:BaseRunTest()
+		end,function(ErrorMessage,StackTrace)
 			self:OutputMessage(Enum.MessageType.MessageError,ErrorMessage)
 			self:OutputMessage(Enum.MessageType.MessageInfo,StackTrace)
 			self.State = NexusUnitTesting.TestState.Failed
@@ -303,7 +306,9 @@ function UnitTest:RunTest()
 	--Teardown the test.
 	local TeardownWorked = true
 	coroutine.wrap(function()
-		TeardownWorked = yxpcall(function() self:Teardown() end,function(ErrorMessage,StackTrace)
+		TeardownWorked = xpcall(function()
+			self:Teardown()
+		end,function(ErrorMessage,StackTrace)
 			self:OutputMessage(Enum.MessageType.MessageError,ErrorMessage)
 			self:OutputMessage(Enum.MessageType.MessageInfo,StackTrace)
 			self.State = NexusUnitTesting.TestState.Failed
