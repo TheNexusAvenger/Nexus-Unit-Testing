@@ -279,7 +279,11 @@ function UnitTest:RunTest()
 			self:Setup()
 		end,function(ErrorMessage)
 			self:OutputMessage(Enum.MessageType.MessageError,ErrorMessage)
-			self:OutputMessage(Enum.MessageType.MessageInfo,debug.traceback())
+			for _,Line in pairs(debug.traceback(nil,2):split("\n")) do
+				if Line ~= "" then
+					self:OutputMessage(Enum.MessageType.MessageInfo,Line)
+				end
+			end
 			self.State = NexusUnitTesting.TestState.Failed
 		end)
 		
@@ -295,7 +299,11 @@ function UnitTest:RunTest()
 			self:BaseRunTest()
 		end,function(ErrorMessage)
 			self:OutputMessage(Enum.MessageType.MessageError,ErrorMessage)
-			self:OutputMessage(Enum.MessageType.MessageInfo,debug.traceback())
+			for _,Line in pairs(debug.traceback(nil,2):split("\n")) do
+				if Line ~= "" then
+					self:OutputMessage(Enum.MessageType.MessageInfo,Line)
+				end
+			end
 			self.State = NexusUnitTesting.TestState.Failed
 		end)
 		
@@ -310,7 +318,11 @@ function UnitTest:RunTest()
 			self:Teardown()
 		end,function(ErrorMessage)
 			self:OutputMessage(Enum.MessageType.MessageError,ErrorMessage)
-			self:OutputMessage(Enum.MessageType.MessageInfo,debug.traceback())
+			for _,Line in pairs(debug.traceback(nil,2):split("\n")) do
+				if Line ~= "" then
+					self:OutputMessage(Enum.MessageType.MessageInfo,Line)
+				end
+			end
 			self.State = NexusUnitTesting.TestState.Failed
 		end)
 	
