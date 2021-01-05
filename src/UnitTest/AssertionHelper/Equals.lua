@@ -26,13 +26,19 @@ local function Equals(Object1,Object2,CheckedValues)
 		end
 		
 		--Return false if either value was already checked.
-		if CheckedValues[Value1] or CheckedValues[Value2] then
+		if (CheckedValues[Value1] and CheckedValues[Value1][Value2]) or (CheckedValues[Value2] and CheckedValues[Value2][Value1]) then
 			return false
 		end
 		
 		--Store the values and return true (continue).
-		CheckedValues[Value1] = true
-		CheckedValues[Value2] = true
+		if not CheckedValues[Value1] then
+			CheckedValues[Value1] = {}
+		end
+		CheckedValues[Value1][Value2] = true
+		if not CheckedValues[Value2] then
+			CheckedValues[Value2] = {}
+		end
+		CheckedValues[Value2][Value1] = true
 		return true
 	end
 	
