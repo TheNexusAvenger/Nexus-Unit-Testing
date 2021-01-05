@@ -24,6 +24,19 @@ function NexusUnitTesting.RunTests(Container)
 	Runs the tests.
 	--]]
 	local function RunTest(Test,BaseName)
+		--Connect the output.
+		local MessageOutputtedEvent = Test.MessageOutputted:Connect(function(Message,Type)
+			if Type == Enum.MessageType.MessageOutput then
+				print("[MESSAGE]: "..tostring(Message))
+			elseif Type == Enum.MessageType.MessageWarning then
+				warn("[WARNING]: "..tostring(Message))
+			elseif Type == Enum.MessageType.MessageError then
+				warn("[ERROR]: "..tostring(Message))
+			elseif Type == Enum.MessageType.MessageInfo then
+				warn("[INFO]: "..tostring(Message))
+			end
+		end)
+
 		--Run the test.
 		local TestName = BaseName..Test.Name
 		print("Running "..TestName)
@@ -38,7 +51,10 @@ function NexusUnitTesting.RunTests(Container)
 		elseif Test.State == NexusUnitTesting.TestState.Skipped then
 			table.insert(SkippedTests,TestName)
 		end
-		
+
+		--Disconnect the output.
+		MessageOutputtedEvent:Disconnect()
+
 		--Run the subtests.
 		for _,SubTest in pairs(Test.SubTests) do
 			RunTest(SubTest,TestName.." > ")
