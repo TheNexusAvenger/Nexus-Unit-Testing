@@ -1,28 +1,26 @@
-  
 {
-	"name": "Repository",
-	"servePort": 8000,
+	"name": "Nexus-Unit-Testing",
 	"tree": {
 		"$className": "DataModel",
 		"ReplicatedStorage": {
 			"$className": "ReplicatedStorage",
 			"NexusUnitTesting": {
-			  "$path": "src",
-			  "NexusInstance": {
-				"$path": "module/Nexus-Instance/src"
-			  },
-			  "NexusProject": {
-				"$path": "module/Nexus-Project/src",
+				"$path": "src",
 				"NexusInstance": {
 					"$path": "module/Nexus-Instance/src"
-				  }
-			  },
-			  "TestEZ": {
-				"$path": "module/TestEZ/lib"
-			  }
+				},
+				"NexusProject": {
+					"$path": "module/Nexus-Project/src",
+					"NexusInstance": {
+						"$path": "module/Nexus-Instance/src"
+					}
+				},
+				"TestEZ": {
+					"$path": "module/TestEZ/lib"
+				}
 			},
 			"NexusUnitTestingTests": {
-			  "$path": "test"
+				"$path": "test"
 			}
 		}
 	}
