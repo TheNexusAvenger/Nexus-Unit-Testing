@@ -20,7 +20,7 @@ require(game.ReplicatedStorage.NexusUnitTesting).RunTests()
 To run only the tests in a specific container, a Roblox
 instance can be specified.
 ```lua
-require(game.ReplicatedStorage.NexusUnitTesting).RunTes(game.ReplicatedStorage.NexusUnitTestingTests)
+require(game.ReplicatedStorage.NexusUnitTesting).RunTest(game.ReplicatedStorage.NexusUnitTestingTests)
 ```
 
 ### Lemur
