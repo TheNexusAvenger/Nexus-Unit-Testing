@@ -1,0 +1,584 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+        <link rel="canonical" href="https://thenexusavenger.github.io/Nexus-Unit-Testing/getting-started/writing-tests/">
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>Writing Tests - Nexus Unit Testing Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#2196f3">
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="blue" data-md-color-accent="light-blue">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#writing-tests" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="https://thenexusavenger.github.io/Nexus-Unit-Testing" title="Nexus Unit Testing Documentation" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              Nexus Unit Testing Documentation
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Writing Tests
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/TheNexusAvenger/Nexus-Unit-Testing/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    TheNexusAvenger/Nexus-Unit-Testing
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="https://thenexusavenger.github.io/Nexus-Unit-Testing" title="Nexus Unit Testing Documentation" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Nexus Unit Testing Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/TheNexusAvenger/Nexus-Unit-Testing/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    TheNexusAvenger/Nexus-Unit-Testing
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      Getting Started
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Getting Started
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Writing Tests
+      </label>
+    
+    <a href="./" title="Writing Tests" class="md-nav__link md-nav__link--active">
+      Writing Tests
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#nexus-unit-testing" class="md-nav__link">
+    Nexus Unit Testing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testez" class="md-nav__link">
+    TestEZ
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../running-tests/" title="Running Tests" class="md-nav__link">
+      Running Tests
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3">
+    
+    <label class="md-nav__link" for="nav-2-3">
+      Classes
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-3">
+        Classes
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../classes/UnitTest/" title="UnitTest" class="md-nav__link">
+      UnitTest
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../classes/ErrorAssertor/" title="ErrorAssertor" class="md-nav__link">
+      ErrorAssertor
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../contributing/" title="Contributing" class="md-nav__link">
+      Contributing
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#nexus-unit-testing" class="md-nav__link">
+    Nexus Unit Testing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testez" class="md-nav__link">
+    TestEZ
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/TheNexusAvenger/Nexus-Unit-Testing/edit/master/docs/getting-started/writing-tests.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="writing-tests">Writing Tests</h1>
+<p>Nexus Unit Testing and TestEZ tests are intended to
+be written in <code>ModuleScripts</code>.</p>
+<h2 id="nexus-unit-testing">Nexus Unit Testing</h2>
+<p>Nexus Unit Testing is designed to not rely
+on returned methods, so tests can be written anywhere
+in the <code>ModuleScript</code> as long as it runs. Detection
+relies on <code>NexusUnitTesting</code> being <code>require</code>d at
+some point in the script. Due to how tests are
+set up, this is required either way.</p>
+<div class="codehilite"><pre><span></span><span class="c1">--Require Nexus Unit Testing. Any of thje following will be detected as long</span>
+<span class="c1">--the module is NexusUnitTesting (not something like NexusUnitTesting2).</span>
+<span class="kd">local</span> <span class="n">NexusUnitTesting</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="n">game</span><span class="p">.</span><span class="n">Path</span><span class="p">.</span><span class="n">To</span><span class="p">.</span><span class="n">NexusUnitTesting</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">NexusUnitTesting</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">&quot;NexusUnitTesting&quot;</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">NexusUnitTesting</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s1">&#39;NexusUnitTesting&#39;</span><span class="p">)</span>
+
+<span class="c1">--Register a function as a unit test.</span>
+<span class="c1">--This is deprecated, but works to not break V.1.X.X tests. Setup and teardown isn&#39;t supported.</span>
+<span class="n">NexusUnitTesting</span><span class="p">:</span><span class="n">RegisterUnitTest</span><span class="p">(</span><span class="s2">&quot;TestName1&quot;</span><span class="p">,</span><span class="kr">function</span><span class="p">(</span><span class="n">UnitTest</span><span class="p">)</span>
+    <span class="n">UnitTest</span><span class="p">:</span><span class="n">AssertEquals</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;Addition doesn&#39;t work.&quot;</span><span class="p">)</span>
+<span class="kr">end</span><span class="p">)</span>
+
+<span class="c1">--Register a unit test class created the long way.</span>
+<span class="kd">local</span> <span class="n">UnitTest</span> <span class="o">=</span> <span class="n">NexusUnitTesting</span><span class="p">.</span><span class="n">UnitTest</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;TestName2&quot;</span><span class="p">)</span>
+<span class="kr">function</span> <span class="nc">UnitTest</span><span class="p">:</span><span class="nf">Setup</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">Name</span><span class="o">..</span><span class="s2">&quot; set up.&quot;</span><span class="p">)</span>
+<span class="kr">end</span>
+<span class="kr">function</span> <span class="nc">UnitTest</span><span class="p">:</span><span class="nf">Run</span><span class="p">()</span>
+    <span class="n">self</span><span class="p">:</span><span class="n">AssertEquals</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;Addition doesn&#39;t work.&quot;</span><span class="p">)</span>
+<span class="kr">end</span>
+<span class="n">NexusUnitTesting</span><span class="p">:</span><span class="n">RegisterUnitTest</span><span class="p">(</span><span class="n">UnitTest</span><span class="p">)</span>
+
+<span class="c1">--Register a unit test class created with setters.</span>
+<span class="n">NexusUnitTesting</span><span class="p">:</span><span class="n">RegisterUnitTest</span><span class="p">(</span><span class="n">UnitTest</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;TestName3&quot;</span><span class="p">):</span><span class="n">SetSetup</span><span class="p">(</span><span class="kr">function</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">Name</span><span class="o">..</span><span class="s2">&quot; set up.&quot;</span><span class="p">)</span>
+<span class="kr">end</span><span class="p">):</span><span class="n">SetRun</span><span class="p">(</span><span class="kr">function</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
+    <span class="n">self</span><span class="p">:</span><span class="n">AssertEquals</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s2">&quot;Addition doesn&#39;t work.&quot;</span><span class="p">)</span>
+<span class="kr">end</span><span class="p">))</span>
+
+<span class="c1">--Return something to prevent Roblox throwing an error from nothing being returned.</span>
+<span class="c1">--If a function is returned, it will be ran (mainly for TestEZ).</span>
+<span class="kr">return</span> <span class="kc">true</span>
+</pre></div>
+
+
+<h2 id="testez">TestEZ</h2>
+<p>TestEZ's detection is different since it relies on
+the name of the script ending with <code>.spec</code>. This allows for
+unit tests to have the same parent as the module being tested
+(ex: <code>UnitTest</code> and <code>UnitTest.spec</code>). The structure for TestEZ
+involves having the tests be contained in a returned function
+to allow for the environment being modified without having
+to modify the source.</p>
+<div class="codehilite"><pre><span></span><span class="kr">return</span> <span class="kr">function</span><span class="p">()</span>
+    <span class="c1">--Describe a test.</span>
+    <span class="n">describe</span><span class="p">(</span><span class="s2">&quot;TestName&quot;</span><span class="p">,</span><span class="kr">function</span><span class="p">()</span>
+        <span class="c1">--Desribe how it should behave.</span>
+        <span class="n">it</span><span class="p">(</span><span class="s2">&quot;should perform addition&quot;</span><span class="p">,</span><span class="kr">function</span><span class="p">()</span>
+            <span class="n">expect</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">).</span><span class="n">to</span><span class="p">.</span><span class="n">equal</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="kr">end</span><span class="p">)</span>
+
+        <span class="n">it</span><span class="p">(</span><span class="s2">&quot;should perform subtraction&quot;</span><span class="p">,</span><span class="kr">function</span><span class="p">()</span>
+            <span class="n">expect</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">).</span><span class="n">to</span><span class="p">.</span><span class="n">equal</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="kr">end</span><span class="p">)</span>
+    <span class="kr">end</span><span class="p">)</span>
+<span class="kr">end</span>
+</pre></div>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../.." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Home
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../running-tests/" title="Running Tests" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Running Tests
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      
+    
+  </body>
+</html>

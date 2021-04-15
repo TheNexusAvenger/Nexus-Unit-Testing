@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+     <loc>https://thenexusavenger.github.io/Nexus-Unit-Testing/</loc>
+     <lastmod>2021-04-15</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://thenexusavenger.github.io/Nexus-Unit-Testing/getting-started/writing-tests/</loc>
+     <lastmod>2021-04-15</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://thenexusavenger.github.io/Nexus-Unit-Testing/getting-started/running-tests/</loc>
+     <lastmod>2021-04-15</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://thenexusavenger.github.io/Nexus-Unit-Testing/getting-started/classes/UnitTest/</loc>
+     <lastmod>2021-04-15</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://thenexusavenger.github.io/Nexus-Unit-Testing/getting-started/classes/ErrorAssertor/</loc>
+     <lastmod>2021-04-15</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://thenexusavenger.github.io/Nexus-Unit-Testing/contributing/</loc>
+     <lastmod>2021-04-15</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+</urlset>

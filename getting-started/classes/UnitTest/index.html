@@ -1,0 +1,1223 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+        <link rel="canonical" href="https://thenexusavenger.github.io/Nexus-Unit-Testing/getting-started/classes/UnitTest/">
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>UnitTest - Nexus Unit Testing Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/application.1b62728e.css">
+      
+        <link rel="stylesheet" href="../../../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#2196f3">
+      
+    
+    
+      <script src="../../../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="blue" data-md-color-accent="light-blue">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#unittestunittest" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="https://thenexusavenger.github.io/Nexus-Unit-Testing" title="Nexus Unit Testing Documentation" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              Nexus Unit Testing Documentation
+            </span>
+            <span class="md-header-nav__topic">
+              
+                UnitTest
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/TheNexusAvenger/Nexus-Unit-Testing/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    TheNexusAvenger/Nexus-Unit-Testing
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="https://thenexusavenger.github.io/Nexus-Unit-Testing" title="Nexus Unit Testing Documentation" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Nexus Unit Testing Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/TheNexusAvenger/Nexus-Unit-Testing/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    TheNexusAvenger/Nexus-Unit-Testing
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      Getting Started
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Getting Started
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../writing-tests/" title="Writing Tests" class="md-nav__link">
+      Writing Tests
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../running-tests/" title="Running Tests" class="md-nav__link">
+      Running Tests
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3" checked>
+    
+    <label class="md-nav__link" for="nav-2-3">
+      Classes
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-3">
+        Classes
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        UnitTest
+      </label>
+    
+    <a href="./" title="UnitTest" class="md-nav__link md-nav__link--active">
+      UnitTest
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#static-unittest-unittestunittest" class="md-nav__link">
+    static UnitTest UnitTest.UnitTest
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#static-unittest-unittestnewstring-unittestname" class="md-nav__link">
+    static UnitTest UnitTest.new(string UnitTestName)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#string-unitestname" class="md-nav__link">
+    string UniTest.Name
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexusunittestingteststate-string-unitteststate" class="md-nav__link">
+    NexusUnitTesting.TestState (string) UnitTest.State
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexusunittestingteststate-string-unittestcombinedstate" class="md-nav__link">
+    NexusUnitTesting.TestState (string) UnitTest.CombinedState
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#listltunittestgt-unittestsubtests" class="md-nav__link">
+    List&lt;UnitTest&gt; UnitTest.SubTests
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#listltltstringenummessagetypegtgt-unittestoutput" class="md-nav__link">
+    List&lt;&lt;string,Enum.MessageType&gt;&gt; UnitTest.Output
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexuseventltunittestgt-unittesttestadded" class="md-nav__link">
+    NexusEvent&lt;UnitTest&gt; UnitTest.TestAdded
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexuseventltstringenummessagetypegt-unittestmessageoutputted" class="md-nav__link">
+    NexusEvent&lt;string,Enum.MessageType&gt; UnitTest.MessageOutputted
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestsetup" class="md-nav__link">
+    void UnitTest:Setup()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestrun" class="md-nav__link">
+    void UnitTest:Run()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestteardown" class="md-nav__link">
+    void UnitTest:Teardown()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestoutputmessageenummessagetype" class="md-nav__link">
+    void UnitTest:OutputMessage(Enum.MessageType,...)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestruntest" class="md-nav__link">
+    void UnitTest:RunTest()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestrunsubtests" class="md-nav__link">
+    void UnitTest:RunSubtests()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestunittestsetenvironmentoverridestring-nameobject-value" class="md-nav__link">
+    `void UnitTest:UnitTest:SetEnvironmentOverride(string Name,object Value)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestsetsetupfunction-method" class="md-nav__link">
+    void UnitTest:SetSetup(function Method)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestsetrunfunction-method" class="md-nav__link">
+    void UnitTest:SetRun(function Method)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestsetteardownfunction-method" class="md-nav__link">
+    void UnitTest:SetTeardown(function Method)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestupdatecombinedstate" class="md-nav__link">
+    void UnitTest:UpdateCombinedState()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unitteststopassertionifcompleted" class="md-nav__link">
+    void UnitTest:StopAssertionIfCompleted()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestpassstring-reason" class="md-nav__link">
+    void UnitTest:Pass(string? Reason)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestfailstring-reason" class="md-nav__link">
+    void UnitTest:Fail(string? Reason)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestskipstring-reason" class="md-nav__link">
+    void UnitTest:Skip(string? Reason)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertfunction-functionstring-message" class="md-nav__link">
+    void UnitTest:Assert(function Function,string Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertequalsobject-expectedobjectobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertEquals(object ExpectedObject,object ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertnotequalsobject-expectedobjectobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertNotEquals(object ExpectedObject,object ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertsameobject-expectedobjectobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertSame(object ExpectedObject,object ActualObject,string Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertnotsameobject-expectedobjectobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertNotSame(object ExpectedObject,object ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertcloseobject-expectedobjectobject-actualobjectfloat-epsilonstring-message" class="md-nav__link">
+    void UnitTest:AssertClose(object ExpectedObject,object ActualObject,float? Epsilon,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertnotcloseobject-expectedobjectobject-actualobjectfloat-epsilonstring-message" class="md-nav__link">
+    void UnitTest:AssertNotClose(object ExpectedObject,object ActualObject,float? Epsilon,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertfalsebool-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertFalse(bool ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestasserttruebool-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertTrue(bool ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertnilobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertNil(object ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertnotnilobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertNotNil(object ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#errorassertor-unittestasserterrorsfunction-functionstring-message" class="md-nav__link">
+    ErrorAssertor UnitTest:AssertErrors(function Function,string? Message)
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../ErrorAssertor/" title="ErrorAssertor" class="md-nav__link">
+      ErrorAssertor
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../../../contributing/" title="Contributing" class="md-nav__link">
+      Contributing
+    </a>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#static-unittest-unittestunittest" class="md-nav__link">
+    static UnitTest UnitTest.UnitTest
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#static-unittest-unittestnewstring-unittestname" class="md-nav__link">
+    static UnitTest UnitTest.new(string UnitTestName)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#string-unitestname" class="md-nav__link">
+    string UniTest.Name
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexusunittestingteststate-string-unitteststate" class="md-nav__link">
+    NexusUnitTesting.TestState (string) UnitTest.State
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexusunittestingteststate-string-unittestcombinedstate" class="md-nav__link">
+    NexusUnitTesting.TestState (string) UnitTest.CombinedState
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#listltunittestgt-unittestsubtests" class="md-nav__link">
+    List&lt;UnitTest&gt; UnitTest.SubTests
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#listltltstringenummessagetypegtgt-unittestoutput" class="md-nav__link">
+    List&lt;&lt;string,Enum.MessageType&gt;&gt; UnitTest.Output
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexuseventltunittestgt-unittesttestadded" class="md-nav__link">
+    NexusEvent&lt;UnitTest&gt; UnitTest.TestAdded
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nexuseventltstringenummessagetypegt-unittestmessageoutputted" class="md-nav__link">
+    NexusEvent&lt;string,Enum.MessageType&gt; UnitTest.MessageOutputted
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestsetup" class="md-nav__link">
+    void UnitTest:Setup()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestrun" class="md-nav__link">
+    void UnitTest:Run()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestteardown" class="md-nav__link">
+    void UnitTest:Teardown()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestoutputmessageenummessagetype" class="md-nav__link">
+    void UnitTest:OutputMessage(Enum.MessageType,...)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestruntest" class="md-nav__link">
+    void UnitTest:RunTest()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestrunsubtests" class="md-nav__link">
+    void UnitTest:RunSubtests()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestunittestsetenvironmentoverridestring-nameobject-value" class="md-nav__link">
+    `void UnitTest:UnitTest:SetEnvironmentOverride(string Name,object Value)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestsetsetupfunction-method" class="md-nav__link">
+    void UnitTest:SetSetup(function Method)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestsetrunfunction-method" class="md-nav__link">
+    void UnitTest:SetRun(function Method)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestsetteardownfunction-method" class="md-nav__link">
+    void UnitTest:SetTeardown(function Method)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestupdatecombinedstate" class="md-nav__link">
+    void UnitTest:UpdateCombinedState()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unitteststopassertionifcompleted" class="md-nav__link">
+    void UnitTest:StopAssertionIfCompleted()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestpassstring-reason" class="md-nav__link">
+    void UnitTest:Pass(string? Reason)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestfailstring-reason" class="md-nav__link">
+    void UnitTest:Fail(string? Reason)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestskipstring-reason" class="md-nav__link">
+    void UnitTest:Skip(string? Reason)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertfunction-functionstring-message" class="md-nav__link">
+    void UnitTest:Assert(function Function,string Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertequalsobject-expectedobjectobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertEquals(object ExpectedObject,object ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertnotequalsobject-expectedobjectobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertNotEquals(object ExpectedObject,object ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertsameobject-expectedobjectobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertSame(object ExpectedObject,object ActualObject,string Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertnotsameobject-expectedobjectobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertNotSame(object ExpectedObject,object ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertcloseobject-expectedobjectobject-actualobjectfloat-epsilonstring-message" class="md-nav__link">
+    void UnitTest:AssertClose(object ExpectedObject,object ActualObject,float? Epsilon,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertnotcloseobject-expectedobjectobject-actualobjectfloat-epsilonstring-message" class="md-nav__link">
+    void UnitTest:AssertNotClose(object ExpectedObject,object ActualObject,float? Epsilon,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertfalsebool-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertFalse(bool ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestasserttruebool-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertTrue(bool ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertnilobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertNil(object ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#void-unittestassertnotnilobject-actualobjectstring-message" class="md-nav__link">
+    void UnitTest:AssertNotNil(object ActualObject,string? Message)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#errorassertor-unittestasserterrorsfunction-functionstring-message" class="md-nav__link">
+    ErrorAssertor UnitTest:AssertErrors(function Function,string? Message)
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/TheNexusAvenger/Nexus-Unit-Testing/edit/master/docs/getting-started/classes/UnitTest.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="unittestunittest">UnitTest.UnitTest</h1>
+<p>(extends <code>NexusInstance</code>)</p>
+<h2 id="static-unittest-unittestunittest"><code>static UnitTest UnitTest.UnitTest</code></h2>
+<p>Cyclic reference to <code>UnitTest</code>. When <code>require("NexusUnitTesting")</code>
+is called, a <code>UnitTest</code> object is retruned. <code>NexusUnitTesting.UnitTest.new(...)</code>
+can be called to create a new unit test object to pass into
+<code>NexusUnitTesting:RegisterUnitTest(...)</code>.</p>
+<h2 id="static-unittest-unittestnewstring-unittestname"><code>static UnitTest UnitTest.new(string UnitTestName)</code></h2>
+<p>Creates a <code>UnitTest</code> object with the given name.</p>
+<h2 id="string-unitestname"><code>string UniTest.Name</code></h2>
+<p>Name of the unit test.</p>
+<h2 id="nexusunittestingteststate-string-unitteststate"><code>NexusUnitTesting.TestState (string) UnitTest.State</code></h2>
+<p>The state of the unit test. Can be:
+- <code>NexusUnitTesting.TestState.NotRun ("NOTRUN")</code> - The test has not been ran.
+- <code>NexusUnitTesting.TestState.InProgress ("INPROGRESS")</code> - The test is running.
+- <code>NexusUnitTesting.TestState.Skipped ("SKIPPED")</code> - The test was skipped.
+- <code>NexusUnitTesting.TestState.Passed ("PASSED")</code> - The test passed.
+- <code>NexusUnitTesting.TestState.Failed ("FAILED")</code> - The test failed (error or assertion failed).</p>
+<h2 id="nexusunittestingteststate-string-unittestcombinedstate"><code>NexusUnitTesting.TestState (string) UnitTest.CombinedState</code></h2>
+<p>The state of the unit test and subtests. Can be:
+- <code>NexusUnitTesting.TestState.NotRun ("NOTRUN")</code> - The test and subtests has not been ran.
+- <code>NexusUnitTesting.TestState.InProgress ("INPROGRESS")</code> - The tests or one subtest is running.
+- <code>NexusUnitTesting.TestState.Skipped ("SKIPPED")</code> - The test has skipped or at least one test has skipped with no subtest failing or still running.
+- <code>NexusUnitTesting.TestState.Passed ("PASSED")</code> - The test passed and all subtests are passed or not ran.
+- <code>NexusUnitTesting.TestState.Failed ("FAILED")</code> - The test failed or at least one test has failed with no subtest still running.</p>
+<h2 id="listltunittestgt-unittestsubtests"><code>List&lt;UnitTest&gt; UnitTest.SubTests</code></h2>
+<p>List of tests that the test contains.</p>
+<h2 id="listltltstringenummessagetypegtgt-unittestoutput"><code>List&lt;&lt;string,Enum.MessageType&gt;&gt; UnitTest.Output</code></h2>
+<p>List of the messages outputted while setting up, running, and tearing
+down the test. The list contains a table with the first item (index <code>1</code>)
+being the message and the second item (index <code>2</code>) the type. The errors
+included the stack trace are stored in the table.</p>
+<h2 id="nexuseventltunittestgt-unittesttestadded"><code>NexusEvent&lt;UnitTest&gt; UnitTest.TestAdded</code></h2>
+<p>Event invoked whena test is added. When fired, the added <code>UnitTest</code>
+is passed.</p>
+<h2 id="nexuseventltstringenummessagetypegt-unittestmessageoutputted"><code>NexusEvent&lt;string,Enum.MessageType&gt; UnitTest.MessageOutputted</code></h2>
+<p>Event invoked when a message is outputted. When fired, the message
+of the output is passed as well as the type.</p>
+<h2 id="void-unittestsetup"><code>void UnitTest:Setup()</code></h2>
+<p>Sets up the test. Intended to be replaced before running
+if additional setup is not needed.</p>
+<h2 id="void-unittestrun"><code>void UnitTest:Run()</code></h2>
+<p>Runs the test. If the setup fails, the test is not continued.
+Intended to be replaced before running to run the test.</p>
+<h2 id="void-unittestteardown"><code>void UnitTest:Teardown()</code></h2>
+<p>Tears down the test. Runs regardless of the test passing
+or failing. Intended to be replaced before running to 
+clear the resources used by the test.</p>
+<h2 id="void-unittestoutputmessageenummessagetype"><code>void UnitTest:OutputMessage(Enum.MessageType,...)</code></h2>
+<p>Registers a message being outputted. Intended to be used
+internally since print and warn are replaced in the environment.</p>
+<h2 id="void-unittestruntest"><code>void UnitTest:RunTest()</code></h2>
+<p>Runs the test and updates the state. Should not be replaced
+since it is used to run <code>UnitTest:Setup()</code>, <code>UnitTest:Run()</code>,
+and <code>UnitTest:Teardown()</code>.</p>
+<h2 id="void-unittestrunsubtests"><code>void UnitTest:RunSubtests()</code></h2>
+<p>Runs all of the subtests and updates the combined state.</p>
+<h2 id="void-unittestunittestsetenvironmentoverridestring-nameobject-value">`void UnitTest:UnitTest:SetEnvironmentOverride(string Name,object Value)</h2>
+<p>Sets an environment override for the methods
+in the test.
+Can be chained with other methods (<code>Object:Method1(...):Method2(...)...</code>)</p>
+<h2 id="void-unittestsetsetupfunction-method"><code>void UnitTest:SetSetup(function Method)</code></h2>
+<p>Sets the Setup method.
+Can be chained with other methods (<code>Object:Method1(...):Method2(...)...</code>)</p>
+<h2 id="void-unittestsetrunfunction-method"><code>void UnitTest:SetRun(function Method)</code></h2>
+<p>Sets the Run method.
+Can be chained with other methods (<code>Object:Method1(...):Method2(...)...</code>)</p>
+<h2 id="void-unittestsetteardownfunction-method"><code>void UnitTest:SetTeardown(function Method)</code></h2>
+<p>Sets the Teardown method.
+Can be chained with other methods (<code>Object:Method1(...):Method2(...)...</code>)</p>
+<h2 id="void-unittestupdatecombinedstate"><code>void UnitTest:UpdateCombinedState()</code></h2>
+<p>Updates the <code>UnitTest.CombinedState</code> property based
+on the test and subtests. Not intended to be
+called externally.</p>
+<h2 id="void-unitteststopassertionifcompleted"><code>void UnitTest:StopAssertionIfCompleted()</code></h2>
+<p>Stops the calling thread if the test has completed.
+This is to prevent threaded tests from calling assertions
+after the test's state has been determined.</p>
+<h2 id="void-unittestpassstring-reason"><code>void UnitTest:Pass(string? Reason)</code></h2>
+<p>Marks a unit test as passed. A reason for passing can also
+be specified.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This yields the thread after running. If this is called in
+<code>UnitTest:Run()</code>, this will not affect <code>UnitTest:Teardown()</code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestfailstring-reason"><code>void UnitTest:Fail(string? Reason)</code></h2>
+<p>Marks a unit test as failed. A reason for passing can also
+be specified.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This throws an error to stop the test. Anything ran in the method
+afterwards will not run. If this is called in
+<code>UnitTest:Run()</code>, this will not affect <code>UnitTest:Teardown()</code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestskipstring-reason"><code>void UnitTest:Skip(string? Reason)</code></h2>
+<p>Marks a unit test as skipped. A reason for passing can also
+be specified.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This yields the thread after running. If this is called in
+<code>UnitTest:Run()</code>, this will not affect <code>UnitTest:Teardown()</code>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestassertfunction-functionstring-message"><code>void UnitTest:Assert(function Function,string Message)</code></h2>
+<p>Runs an assertion. The given function should return <code>true</code> if the
+assertion is valid and <code>false</code> if the assertion is invalid. If the
+assertion fails, an error is thrown with the given message.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestassertequalsobject-expectedobjectobject-actualobjectstring-message"><code>void UnitTest:AssertEquals(object ExpectedObject,object ActualObject,string? Message)</code></h2>
+<p>Asserts that two objects are equal. Special cases are handled for
+objects like arrays that may have the same elements. Not intended
+to be used on Roblox Instances.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestassertnotequalsobject-expectedobjectobject-actualobjectstring-message"><code>void UnitTest:AssertNotEquals(object ExpectedObject,object ActualObject,string? Message)</code></h2>
+<p>Asserts that two objects aren't equal. Special cases are handled for
+objects like arrays that may have the same elements. Not intended
+to be used on Roblox Instances.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestassertsameobject-expectedobjectobject-actualobjectstring-message"><code>void UnitTest:AssertSame(object ExpectedObject,object ActualObject,string Message)</code></h2>
+<p>Asserts that two objects are the same. This is mainly used for testing
+if a new array or instance isn't created.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestassertnotsameobject-expectedobjectobject-actualobjectstring-message"><code>void UnitTest:AssertNotSame(object ExpectedObject,object ActualObject,string? Message)</code></h2>
+<p>Asserts that two objects aren't the same. This is mainly used for testing
+if a new array or instance isn't created.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestassertcloseobject-expectedobjectobject-actualobjectfloat-epsilonstring-message"><code>void UnitTest:AssertClose(object ExpectedObject,object ActualObject,float? Epsilon,string? Message)</code></h2>
+<p>Asserts that two objects are within a given Epsilon of each other. If
+the message is used in place of the Epsilon, 0.001 will be used.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestassertnotcloseobject-expectedobjectobject-actualobjectfloat-epsilonstring-message"><code>void UnitTest:AssertNotClose(object ExpectedObject,object ActualObject,float? Epsilon,string? Message)</code></h2>
+<p>Asserts that two objects aren't within a given Epsilon of each other. If
+the message is used in place of the Epsilon, 0.001 will be used.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestassertfalsebool-actualobjectstring-message"><code>void UnitTest:AssertFalse(bool ActualObject,string? Message)</code></h2>
+<p>Asserts that an object is false.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestasserttruebool-actualobjectstring-message"><code>void UnitTest:AssertTrue(bool ActualObject,string? Message)</code></h2>
+<p>Asserts that an object is true.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestassertnilobject-actualobjectstring-message"><code>void UnitTest:AssertNil(object ActualObject,string? Message)</code></h2>
+<p>Asserts that an object is nil.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="void-unittestassertnotnilobject-actualobjectstring-message"><code>void UnitTest:AssertNotNil(object ActualObject,string? Message)</code></h2>
+<p>Asserts that an object is not nil.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+<h2 id="errorassertor-unittestasserterrorsfunction-functionstring-message"><code>ErrorAssertor UnitTest:AssertErrors(function Function,string? Message)</code></h2>
+<p>Asserts that an error is thrown. Returns an <code>ErrorAssertor</code>
+object that can be used to validate the error's message.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This calls <code>UnitTest:StopAssertionIfCompleted()</code> before
+running. If the test has already completed, this will
+cause the test to function to yield, which may be unintended.</p>
+</div>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../../running-tests/" title="Running Tests" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Running Tests
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../ErrorAssertor/" title="ErrorAssertor" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                ErrorAssertor
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../../.."}})</script>
+      
+    
+  </body>
+</html>
