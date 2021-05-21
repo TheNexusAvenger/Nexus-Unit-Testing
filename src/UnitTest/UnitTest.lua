@@ -67,7 +67,7 @@ function UnitTest:__new(Name)
 	self.SectionFinished = NexusEventCreator:CreateEvent()
 	
 	--Connect the changed events.
-	self:GetPropertyChangedSignal("State"):Connect(function()
+	self:AddPropertyFinalizer("State",function()
 		self:UpdateCombinedState()
 	end)
 end
