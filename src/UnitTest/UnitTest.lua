@@ -6,7 +6,7 @@ Class representing a unit test.
 
 local NexusUnitTesting = require(script.Parent.Parent:WaitForChild("NexusUnitTestingProject"))
 local NexusInstance = NexusUnitTesting:GetResource("NexusInstance.NexusInstance")
-local NexusEventCreator = NexusUnitTesting:GetResource("NexusInstance.Event.NexusEventCreator")
+local NexusEvent = NexusUnitTesting:GetResource("NexusInstance.Event.NexusEvent")
 local ModuleSandbox = NexusUnitTesting:GetResource("UnitTest.ModuleSandbox")
 local Equals = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.Equals")
 local IsClose = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.IsClose")
@@ -62,9 +62,9 @@ function UnitTest:__new(Name)
     self:AddTestEZOverrides()
     
     --Create the events.
-    self.TestAdded = NexusEventCreator:CreateEvent()
-    self.MessageOutputted = NexusEventCreator:CreateEvent()
-    self.SectionFinished = NexusEventCreator:CreateEvent()
+    self.TestAdded = NexusEvent.new()
+    self.MessageOutputted = NexusEvent.new()
+    self.SectionFinished = NexusEvent.new()
     
     --Connect the changed events.
     self:AddPropertyFinalizer("State",function()

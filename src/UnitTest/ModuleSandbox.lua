@@ -6,7 +6,7 @@ Sandboxes requiring ModuleScripts to prevent caching.
 
 local NexusUnitTesting = require(script.Parent.Parent:WaitForChild("NexusUnitTestingProject"))
 local NexusInstance = NexusUnitTesting:GetResource("NexusInstance.NexusInstance")
-local NexusEventCreator = NexusUnitTesting:GetResource("NexusInstance.Event.NexusEventCreator")
+local NexusEvent = NexusUnitTesting:GetResource("NexusInstance.Event.NexusEvent")
 
 local ModuleSandbox = NexusInstance:Extend()
 ModuleSandbox:SetClassName("ModuleSandbox")
@@ -25,7 +25,7 @@ function ModuleSandbox:__new(BaseSandbox)
     self.CachedModules = {}
     
     --Create the events.
-    self.ModuleLoaded = NexusEventCreator:CreateEvent()
+    self.ModuleLoaded = NexusEvent.new()
 end
 
 --[[
