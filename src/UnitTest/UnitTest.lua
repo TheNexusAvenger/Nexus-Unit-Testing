@@ -269,12 +269,12 @@ function UnitTest:RunTest()
     Waits for a section to finish.
     --]]
     local function WaitForSectionToFinish()
-        while not SectionFinished do wait() end
+        while not SectionFinished do task.wait() end
         SectionFinished = false
     end
     
     --Run the setup.
-    coroutine.wrap(function()
+    task.spawn(function()
         xpcall(function()
             self:Setup()
         end,function(ErrorMessage)
@@ -288,13 +288,13 @@ function UnitTest:RunTest()
         end)
         
         self.SectionFinished:Fire()
-    end)()
+    end)
     WaitForSectionToFinish()
     if self.State ~= NexusUnitTesting.TestState.InProgress then SectionFinishedConnection:Disconnect() return end
     
     --Run the test.
     local TestWorked = true
-    coroutine.wrap(function()
+    task.spawn(function()
         TestWorked = xpcall(function()
             self:BaseRunTest()
         end,function(ErrorMessage)
@@ -308,12 +308,12 @@ function UnitTest:RunTest()
         end)
         
         self.SectionFinished:Fire()
-    end)()
+    end)
     WaitForSectionToFinish()
     
     --Teardown the test.
     local TeardownWorked = true
-    coroutine.wrap(function()
+    task.spawn(function()
         TeardownWorked = xpcall(function()
             self:Teardown()
         end,function(ErrorMessage)
@@ -327,7 +327,7 @@ function UnitTest:RunTest()
         end)
     
         self.SectionFinished:Fire()
-    end)()
+    end)
     WaitForSectionToFinish()
     
     --Mark the test as successful.

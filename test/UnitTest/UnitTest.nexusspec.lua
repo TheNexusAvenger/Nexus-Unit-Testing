@@ -1155,9 +1155,9 @@ NexusUnitTesting:RegisterUnitTest("FailAfterSkip",function(UnitTest)
         UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.InProgress)
         UnitTest:AssertEquals(self.CombinedState,NexusUnitTestingProject.TestState.InProgress)
         
-        coroutine.wrap(function()
+        task.spawn(function()
             self:Skip()
-        end)()
+        end)
         
         wait()
         UnitTest:AssertEquals(self.State,NexusUnitTestingProject.TestState.Skipped)
