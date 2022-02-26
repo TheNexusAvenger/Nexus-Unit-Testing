@@ -37,20 +37,20 @@ function ModuleUnitTest:Run()
         elseif Module.Name == "NexusUnitTesting" then
             return self
         end
-        
+
         --Return the base require.
         return self.Sandbox:RequireModule(Module,EnvironmentOverrides)
     end
     EnvironmentOverrides["print"] = function(...)
-        self:OutputMessage(Enum.MessageType.MessageOutput,...)
+        self:GetOutputTest():OutputMessage(Enum.MessageType.MessageOutput,...)
     end
     EnvironmentOverrides["warn"] = function(...)
-        self:OutputMessage(Enum.MessageType.MessageWarning,...)
+        self:GetOutputTest():OutputMessage(Enum.MessageType.MessageWarning,...)
     end
-    
+
     --Require the module.
     local TestReturn = self.Sandbox:RequireModule(self.ModuleScript,EnvironmentOverrides)
-    
+
     --Call the function if a function was returend (used by TestEZ)
     if type(TestReturn) == "function" then
         self:WrapEnvironment(TestReturn,{

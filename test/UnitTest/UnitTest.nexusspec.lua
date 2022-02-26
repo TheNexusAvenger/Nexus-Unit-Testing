@@ -766,6 +766,37 @@ NexusUnitTesting:RegisterUnitTest("RunSubtestsWithFailure",function(UnitTest)
     UnitTest:AssertEquals(CuT3.CombinedState,NexusUnitTestingProject.TestState.Passed,"Test state not correct.")
 end)
 
+
+--[[
+Tests the output with a function with the parent environment.
+--]]
+NexusUnitTesting:RegisterUnitTest("OutputMessageUsingStack", function(UnitTest)
+    --Create the test.
+    local OutputInformation = {}
+    local CuT = UnitTestClass.new("TestName"):SetRun(function(UnitTest)
+        local function Test()
+            print("Test")
+            warn("Test")
+        end
+
+        local SubTest = UnitTestClass.new("TestName2")
+        SubTest.MessageOutputted:Connect(function(Message, Type)
+            table.insert(OutputInformation, {Message, Type})
+        end)
+        UnitTest:RegisterUnitTest(SubTest:SetRun(function(UnitTest)
+            Test()
+        end))
+    end)
+
+    --Run the test and assert the output is correct.
+    CuT:RunTest()
+    CuT:RunSubtests()
+    UnitTest:AssertEquals(OutputInformation[1][1], "Test")
+    UnitTest:AssertEquals(OutputInformation[1][2], Enum.MessageType.MessageOutput)
+    UnitTest:AssertEquals(OutputInformation[2][1], "Test")
+    UnitTest:AssertEquals(OutputInformation[2][2], Enum.MessageType.MessageWarning)
+    UnitTest:AssertNil(OutputInformation[3], "Too many messages were outputted.")
+end)
 --[[
 Tests the require method in tests.
 --]]

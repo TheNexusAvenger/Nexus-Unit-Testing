@@ -13,12 +13,13 @@ local IsClose = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.IsClose")
 local ErrorAssertor = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.ErrorAssertor")
 local TestPlanner = NexusUnitTesting:GetResource("TestEZ.TestPlanner")
 local TestPlanBuilder = NexusUnitTesting:GetResource("TestEZ.TestPlanBuilder")
-local TestEnum = NexusUnitTesting:GetResource("TestEZ.TestEnum")
 local TestRunner = NexusUnitTesting:GetResource("TestEZ.TestRunner")
 
 local UnitTest = NexusInstance:Extend()
 UnitTest:SetClassName("UnitTest")
 UnitTest.UnitTest = UnitTest
+UnitTest.FunctionToUnitTest = {}
+setmetatable(UnitTest.FunctionToUnitTest, {__mode="kv"})
 
 
 
@@ -49,10 +50,10 @@ function UnitTest:__new(Name)
     --Store the overrides.
     self.Overrides = {
         ["print"] = function(...)
-            self:OutputMessage(Enum.MessageType.MessageOutput,...)
+            self:GetOutputTest():OutputMessage(Enum.MessageType.MessageOutput,...)
         end,
         ["warn"] = function(...)
-            self:OutputMessage(Enum.MessageType.MessageWarning,...)
+            self:GetOutputTest():OutputMessage(Enum.MessageType.MessageWarning,...)
         end,
         ["BaseRequire"] = require,
         ["require"] = function(Module)
@@ -70,6 +71,24 @@ function UnitTest:__new(Name)
     self:AddPropertyFinalizer("State",function()
         self:UpdateCombinedState()
     end)
+end
+
+--[[
+Returns the test to output to.
+--]]
+function UnitTest:GetOutputTest()
+    --Iterate through the functions and return the test if one exists.
+    local CurrentIndex = 0
+    while true do
+        CurrentIndex = CurrentIndex + 1
+        local Function = debug.info(coroutine.running(), CurrentIndex, "f")
+        if Function == nil then break end
+        local Test = self.FunctionToUnitTest[Function]
+        if Test then return Test end
+    end
+
+    --Return itself (no other results valid).
+    return self
 end
 
 --[[
@@ -156,6 +175,7 @@ framework specific things logging.
 --]]
 function UnitTest:WrapEnvironment(Method,Overrides)
     --Add the overrides.
+    self.FunctionToUnitTest[Method] = self
     Overrides = Overrides or {}
     for Key,Value in pairs(self.Overrides) do
         Overrides[Key] = Value
