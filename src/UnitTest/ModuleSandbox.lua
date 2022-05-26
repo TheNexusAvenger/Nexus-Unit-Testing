@@ -96,10 +96,16 @@ function ModuleSandbox:RequireModule(Module,EnvironmentOverrides)
     })
     
     --Modify the source.
+    local IsArchivable = Module.Archivable
+    Module.Archivable = true
     local ClonedModule = Module:Clone()
     _G[ClonedModule] = Environment
     ClonedModule.Source = "local function Load() "..ClonedModule.Source.."\nend\n\nsetfenv(Load,_G[script])\n_G[script] = nil\nreturn Load()"
-    
+
+    --Reset the Archivable value.
+    Module.Archivable = IsArchivable
+    ClonedModule.Archivable = IsArchivable
+
     --Require the module.
     local BaseRequire = getfenv()["BaseRequire"]
     if BaseRequire then
