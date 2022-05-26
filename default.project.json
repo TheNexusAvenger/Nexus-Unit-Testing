@@ -1,24 +1,15 @@
 {
-    "name": "Nexus-Unit-Testing",
+    "name": "NexusUnitTesting",
     "tree": {
-        "$className": "DataModel",
-        "ReplicatedStorage": {
-            "$className": "ReplicatedStorage",
-            "NexusUnitTesting": {
-                "$path": "src",
-                "NexusInstance": {
-                    "$path": "module/Nexus-Instance/"
-                },
-                "NexusProject": {
-                    "$path": "module/Nexus-Project/"
-                },
-                "TestEZ": {
-                    "$path": "module/TestEZ/"
-                }
-            },
-            "NexusUnitTestingTests": {
-                "$path": "test"
-            }
+        "$path": "src",
+        "NexusInstance": {
+            "$path": "module/Nexus-Instance/"
+        },
+        "NexusProject": {
+            "$path": "module/Nexus-Project/"
+        },
+        "TestEZ": {
+            "$path": "module/TestEZ/"
         }
     }
 }

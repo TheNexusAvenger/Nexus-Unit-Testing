@@ -1,0 +1,15 @@
+{
+    "name": "Nexus-Unit-Testing",
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "NexusUnitTesting": {
+                "$path": "."
+            },
+            "NexusUnitTestingTests": {
+                "$path": "test"
+            }
+        }
+    }
+}
