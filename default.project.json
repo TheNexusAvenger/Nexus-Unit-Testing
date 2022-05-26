@@ -7,16 +7,13 @@
             "NexusUnitTesting": {
                 "$path": "src",
                 "NexusInstance": {
-                    "$path": "module/Nexus-Instance/src"
+                    "$path": "module/Nexus-Instance/"
                 },
                 "NexusProject": {
-                    "$path": "module/Nexus-Project/src",
-                    "NexusInstance": {
-                        "$path": "module/Nexus-Instance/src"
-                    }
+                    "$path": "module/Nexus-Project/"
                 },
                 "TestEZ": {
-                    "$path": "module/TestEZ/lib"
+                    "$path": "module/TestEZ/"
                 }
             },
             "NexusUnitTestingTests": {

@@ -11,9 +11,7 @@ local ModuleSandbox = NexusUnitTesting:GetResource("UnitTest.ModuleSandbox")
 local Equals = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.Equals")
 local IsClose = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.IsClose")
 local ErrorAssertor = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.ErrorAssertor")
-local TestPlanner = NexusUnitTesting:GetResource("TestEZ.TestPlanner")
-local TestPlanBuilder = NexusUnitTesting:GetResource("TestEZ.TestPlanBuilder")
-local TestRunner = NexusUnitTesting:GetResource("TestEZ.TestRunner")
+local TestEZ = NexusUnitTesting:GetResource("TestEZ")
 
 local UnitTest = NexusInstance:Extend()
 UnitTest:SetClassName("UnitTest")
@@ -36,9 +34,9 @@ local UNIT_TEST_STATE_PRIORITY = {
 --[[
 Creates a unit test object.
 --]]
-function UnitTest:__new(Name)
+function UnitTest:__new(Name, RunDirectly)
     self:InitializeSuper()
-    
+
     --Store the state.
     self.Name = Name
     self.State = NexusUnitTesting.TestState.NotRun
@@ -46,7 +44,7 @@ function UnitTest:__new(Name)
     self.SubTests = {}
     self.Output = {}
     self.Sandbox = ModuleSandbox.new()
-    
+
     --Store the overrides.
     self.Overrides = {
         ["print"] = function(...)
@@ -60,13 +58,15 @@ function UnitTest:__new(Name)
             return self.Sandbox:RequireModule(Module)
         end,
     }
-    self:AddTestEZOverrides()
-    
+    if not RunDirectly then
+        self:AddTestEZOverrides()
+    end
+
     --Create the events.
     self.TestAdded = NexusEvent.new()
     self.MessageOutputted = NexusEvent.new()
     self.SectionFinished = NexusEvent.new()
-    
+
     --Connect the changed events.
     self:AddPropertyFinalizer("State",function()
         self:UpdateCombinedState()
@@ -92,17 +92,114 @@ function UnitTest:GetOutputTest()
 end
 
 --[[
+Wraps a TestEZ environment.
+--]]
+function UnitTest:WrapTestEZNodeEnvironment(CurrentNode)
+    if not CurrentNode.NexusUnitTest then
+        CurrentNode.NexusUnitTest = self
+    end
+
+    --[[
+    Adds a child node.
+    --]]
+    local function AddChild(Phrase, Callback, NodeType, NodeModifier)
+        --Create the parent test.
+        local ParentTest = CurrentNode.NexusUnitTest
+        local NewTest = UnitTest.new(Phrase, true)
+        NewTest.IsInternal = true
+        NewTest.Run = Callback
+        if NodeModifier == TestEZ.TestEnum.NodeModifier.Skip or CurrentNode.modifier == TestEZ.TestEnum.NodeModifier.Skip then
+            NewTest.State = NexusUnitTesting.TestState.Skipped
+        end
+        ParentTest:RegisterUnitTest(NewTest)
+
+        --Create the node.
+        local Node = CurrentNode:addChild(Phrase, NodeType, NodeModifier)
+        Node.NexusUnitTest = NewTest
+        Node.callback = function()
+            --Run the test.
+            NewTest:RunTest()
+
+            --Update the state.
+            if Node.modifier == TestEZ.TestEnum.NodeModifier.Skip or ParentTest.State == NexusUnitTesting.TestState.Skipped then
+                NewTest.State = NexusUnitTesting.TestState.Skipped
+            end
+        end
+        for Key, Value in pairs(Node.environment) do
+            NewTest:SetEnvironmentOverride(Key, Value)
+        end
+
+        --Expand the node.
+        if NodeType == TestEZ.TestEnum.NodeType.Describe then
+            Node:expand()
+        end
+        return Node
+    end
+
+    --Replace the describe and it environment.
+    local Environment = CurrentNode.environment
+    function Environment.describeFOCUS(phrase, callback)
+        AddChild(phrase, callback, TestEZ.TestEnum.NodeType.Describe, TestEZ.TestEnum.NodeModifier.Focus)
+    end
+    function Environment.describeSKIP(phrase, callback)
+        AddChild(phrase, callback, TestEZ.TestEnum.NodeType.Describe, TestEZ.TestEnum.NodeModifier.Skip)
+    end
+    function Environment.describe(phrase, callback)
+        AddChild(phrase, callback, TestEZ.TestEnum.NodeType.Describe, TestEZ.TestEnum.NodeModifier.None)
+    end
+    function Environment.itFOCUS(phrase, callback)
+        AddChild(phrase, callback, TestEZ.TestEnum.NodeType.It, TestEZ.TestEnum.NodeModifier.Focus)
+    end
+    function Environment.itSKIP(phrase, callback)
+        AddChild(phrase, callback, TestEZ.TestEnum.NodeType.It, TestEZ.TestEnum.NodeModifier.Skip)
+    end
+    function Environment.itFIXME(phrase, callback)
+        local Node = AddChild(phrase, callback, TestEZ.TestEnum.NodeType.It, TestEZ.TestEnum.NodeModifier.Skip)
+        Node.NexusUnitTest:OutputMessage(Enum.MessageType.MessageWarning, "FIXME: broken test "..Node:getFullName())
+    end
+    function Environment.it(phrase, callback)
+        AddChild(phrase, callback, TestEZ.TestEnum.NodeType.It, TestEZ.TestEnum.NodeModifier.None)
+    end
+    function Environment.FIXME(optionalMessage)
+        CurrentNode.NexusUnitTest:OutputMessage(Enum.MessageType.MessageWarning, "FIXME: broken test "..CurrentNode:getFullName().." "..(optionalMessage or ""))
+        CurrentNode.modifier = TestEZ.TestEnum.NodeModifier.Skip
+    end
+    Environment.fit = Environment.itFOCUS
+    Environment.xit = Environment.itSKIP
+    Environment.fdescribe = Environment.describeFOCUS
+    Environment.xdescribe = Environment.describeSKIP
+end
+
+--[[
+Wraps a TestNode in TestEZ.
+--]]
+function UnitTest:WrapTestEZTestNode(Node)
+    local OriginalAddChild = Node.addChild
+    Node.addChild = function(...)
+        local ChildNode = OriginalAddChild(...)
+        self:WrapTestEZNodeEnvironment(ChildNode)
+        self:WrapTestEZTestNode(ChildNode)
+        return ChildNode
+    end
+end
+
+--[[
 Adds overrides for TestEZ.
 --]]
 function UnitTest:AddTestEZOverrides()
     --Create the base environment.
-    local PlanBuilder = TestPlanBuilder.new()
-    self.PlanBuilder = PlanBuilder
-    local Environment = TestPlanner.createEnvironment(PlanBuilder)
-    
-    --Add the methods.
-    for Name,Value in pairs(Environment) do
-        self:SetEnvironmentOverride(Name,Value)
+    local TestPlan = TestEZ.TestPlan.new()
+    self:WrapTestEZTestNode(TestPlan)
+    local TestNode = TestPlan:addChild(self.Name, TestEZ.TestEnum.NodeType.Describe)
+    TestNode.callback = function()
+        self.object:Run()
+    end
+    self.TestNode = TestNode
+    self.TestPlan = TestPlan
+
+    --Store the environment.
+    for Name, Value in pairs(TestNode.environment) do
+        self:SetEnvironmentOverride(Name, Value)
     end
 end
 
@@ -206,7 +303,7 @@ function UnitTest:RegisterUnitTest(NewUnitTest,Function)
         NewUnitTest = UnitTest.new(NewUnitTest)
         NewUnitTest:SetRun(Function)
     end
-    
+
     --Add the unit test.
     table.insert(self.SubTests,NewUnitTest)
     NewUnitTest.Sandbox.BaseSandbox = self.Sandbox
@@ -217,52 +314,15 @@ end
 Runs the run method and any TestEZ tests.
 --]]
 function UnitTest:BaseRunTest()
-    --Run the test.
-    self:Run()
-    
-    --Run the TestEZ tests if any were defined.
-    local TestEZPlan = self.PlanBuilder:finalize()
-    if #TestEZPlan.children >= 1 then
-        local TestEZResults = TestRunner.runPlan(TestEZPlan)
-        
-        --[[
-        Visits a child node.
-        --]]
-        local function VisitChildNode(Node,ParentTest)
-            local Status = Node.status
-            local PlanNode = Node.planNode
-            local Skipped = PlanNode.modifier == "Skip"
-            
-            --Create the new test.
-            local NewTest = UnitTest.new(PlanNode.phrase)
-            ParentTest:RegisterUnitTest(NewTest)
-            if Skipped or ParentTest.State == NexusUnitTesting.TestState.Skipped then
-                NewTest.State = NexusUnitTesting.TestState.Skipped
-            elseif Status == "Success" then
-                NewTest.State = NexusUnitTesting.TestState.Passed
-            elseif Status == "Failure" then
-                NewTest.State = NexusUnitTesting.TestState.Failed
-            end
-            
-            --Visit the child nodes.
-            for _,ChildNode in pairs(Node.children) do
-                VisitChildNode(ChildNode,NewTest)
-            end
-            
-            --Update the combined state.
-            NewTest:UpdateCombinedState()
-            
-            --Output the error(s).
-            for _,Error in pairs(Node.errors) do
-                self:OutputMessage(Enum.MessageType.MessageError,string.split(Error,"\n",1)[1])
-                self:OutputMessage(Enum.MessageType.MessageInfo,Error)
-            end
+    if self.TestNode then
+        self.TestNode:expand()
+        TestEZ.TestRunner.runPlan(self.TestPlan)
+        if self.TestNode.loadError then
+            self.State = NexusUnitTesting.TestState.Failed
+            self:OutputMessage(Enum.MessageType.MessageError, self.TestNode.loadError)
         end
-        
-        --Visit the children.
-        for _,ChildNode in pairs(TestEZResults.children) do
-            VisitChildNode(ChildNode,self)
-        end
+    else
+        self:Run()
     end
 end
 
@@ -368,7 +428,7 @@ function UnitTest:RunSubtests()
         
         --Run the subtests to get the tests.
         for _,Test in pairs(self.SubTests) do
-            if Test.State == NexusUnitTesting.TestState.NotRun then
+            if Test.State == NexusUnitTesting.TestState.NotRun and not Test.IsInternal then
                 Test:RunTest()
             end
         end
@@ -644,7 +704,7 @@ function UnitTest:AssertClose(ExpectedObject,ActualObject,Epsilon,Message)
     end
     
     --Run the assertion.
-    self:Assert(Assert,Message)    
+    self:Assert(Assert,Message)
 end
     
 --[[

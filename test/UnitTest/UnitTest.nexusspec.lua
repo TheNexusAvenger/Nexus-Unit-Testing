@@ -332,21 +332,6 @@ NexusUnitTesting:RegisterUnitTest("RunTestTestEZPass",function(UnitTest)
     UnitTest:AssertTrue(TeardownRun,"Teardown not ran.")
     UnitTest:AssertTrue(StateTestCompleted,"Test case not ran.")
     UnitTest:AssertTrue(CombinedStateTestCompleted,"Test case not ran.")
-    
-    --Assert the subtests are correct.
-    UnitTest:AssertEquals(#CuT.SubTests,1,"Subtests count is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test","\"Describe\" name is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Passed,"\"Describe\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Passed,"\"Describe\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests,2,"\"Describe\" subtests is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].Name,"state should be in progress","\"It\" name is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].State,NexusUnitTestingProject.TestState.Passed,"\"It\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Passed,"\"It\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[1].SubTests,0,"\"It\" has subtets.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].Name,"combined state should be in progress")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].State,NexusUnitTestingProject.TestState.Passed,"\"It\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].CombinedState,NexusUnitTestingProject.TestState.Passed,"\"It\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[2].SubTests,0,"\"It\" has subtets.")
 end)
 
 --[[
@@ -405,21 +390,6 @@ NexusUnitTesting:RegisterUnitTest("RunTestTestEZFailedTest",function(UnitTest)
     UnitTest:AssertTrue(TeardownRun,"Teardown not ran.")
     UnitTest:AssertTrue(StateTestCompleted,"Test case not ran.")
     UnitTest:AssertFalse(CombinedStateTestCompleted,"Test case ran.")
-    
-    --Assert the subtests are correct.
-    UnitTest:AssertEquals(#CuT.SubTests,1,"Subtests count is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test","\"Describe\" name is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Failed,"\"Describe\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Failed,"\"Describe\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests,2,"\"Describe\" subtests is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].Name,"state should be in progress","\"It\" name is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].State,NexusUnitTestingProject.TestState.Passed,"\"It\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Passed,"\"It\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[1].SubTests,0,"\"It\" has subtets.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].Name,"combined state should be in progress")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].State,NexusUnitTestingProject.TestState.Failed,"\"It\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].CombinedState,NexusUnitTestingProject.TestState.Failed,"\"It\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[2].SubTests,0,"\"It\" has subtets.")
 end)
 
 --[[
@@ -465,13 +435,6 @@ NexusUnitTesting:RegisterUnitTest("RunTestTestEZFailedSetup",function(UnitTest)
     UnitTest:AssertTrue(SetupRun,"Setup not ran.")
     UnitTest:AssertTrue(TestRun,"Test not ran.")
     UnitTest:AssertTrue(TeardownRun,"Teardown not ran.")
-    
-    --Assert the subtests are correct.
-    UnitTest:AssertEquals(#CuT.SubTests,1,"Subtests count is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test","\"Describe\" name is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Failed,"\"Describe\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Failed,"\"Describe\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests,0,"\"Describe\" subtests is incorrect.")
 end)
 
 --[[
@@ -533,21 +496,6 @@ NexusUnitTesting:RegisterUnitTest("RunTestTestEZSkippedSetup",function(UnitTest)
     UnitTest:AssertTrue(TeardownRun,"Teardown not ran.")
     UnitTest:AssertFalse(StateTestCompleted,"Test case not ran.")
     UnitTest:AssertFalse(CombinedStateTestCompleted,"Test case ran.")
-    
-    --Assert the subtests are correct.
-    UnitTest:AssertEquals(#CuT.SubTests,1,"Subtests count is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test","\"Describe\" name is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Skipped,"\"Describe\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Skipped,"\"Describe\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests,2,"\"Describe\" subtests is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].Name,"state should be in progress","\"It\" name is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].State,NexusUnitTestingProject.TestState.Skipped,"\"It\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Skipped,"\"It\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[1].SubTests,0,"\"It\" has subtets.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].Name,"combined state should be in progress")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].State,NexusUnitTestingProject.TestState.Skipped,"\"It\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].CombinedState,NexusUnitTestingProject.TestState.Skipped,"\"It\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[2].SubTests,0,"\"It\" has subtets.")
 end)
 
 --[[
@@ -607,21 +555,6 @@ NexusUnitTesting:RegisterUnitTest("RunTestTestEZSkippedTest",function(UnitTest)
     UnitTest:AssertTrue(TeardownRun,"Teardown not ran.")
     UnitTest:AssertFalse(StateTestCompleted,"Test case not ran.")
     UnitTest:AssertTrue(CombinedStateTestCompleted,"Test case ran.")
-    
-    --Assert the subtests are correct.
-    UnitTest:AssertEquals(#CuT.SubTests,1,"Subtests count is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].Name,"Test","\"Describe\" name is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].State,NexusUnitTestingProject.TestState.Passed,"\"Describe\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Skipped,"\"Describe\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests,2,"\"Describe\" subtests is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].Name,"state should be in progress","\"It\" name is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].State,NexusUnitTestingProject.TestState.Skipped,"\"It\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[1].CombinedState,NexusUnitTestingProject.TestState.Skipped,"\"It\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[1].SubTests,0,"\"It\" has subtets.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].Name,"combined state should be in progress")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].State,NexusUnitTestingProject.TestState.Passed,"\"It\" state is incorrect.")
-    UnitTest:AssertEquals(CuT.SubTests[1].SubTests[2].CombinedState,NexusUnitTestingProject.TestState.Passed,"\"It\" combined state is incorrect.")
-    UnitTest:AssertEquals(#CuT.SubTests[1].SubTests[2].SubTests,0,"\"It\" has subtets.")
 end)
 
 --[[
