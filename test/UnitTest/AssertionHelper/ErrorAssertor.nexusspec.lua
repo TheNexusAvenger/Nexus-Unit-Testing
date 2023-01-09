@@ -6,8 +6,7 @@ Tests the ErrorAssertor class.
 
 local NexusUnitTesting = require("NexusUnitTesting")
 
-local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("NexusUnitTestingProject"))
-local ErrorAssertor = NexusUnitTestingProject:GetResource("UnitTest.AssertionHelper.ErrorAssertor")
+local ErrorAssertor = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("UnitTest"):WaitForChild("AssertionHelper"):WaitForChild("ErrorAssertor"))
 
 
 

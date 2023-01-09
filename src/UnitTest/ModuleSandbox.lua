@@ -4,9 +4,8 @@ TheNexusAvenger
 Sandboxes requiring ModuleScripts to prevent caching.
 --]]
 
-local NexusUnitTesting = require(script.Parent.Parent:WaitForChild("NexusUnitTestingProject"))
-local NexusInstance = NexusUnitTesting:GetResource("NexusInstance.NexusInstance")
-local NexusEvent = NexusUnitTesting:GetResource("NexusInstance.Event.NexusEvent")
+local NexusInstance = require(script.Parent.Parent:WaitForChild("NexusInstance"):WaitForChild("NexusInstance"))
+local NexusEvent = require(script.Parent.Parent:WaitForChild("NexusInstance"):WaitForChild("Event"):WaitForChild("NexusEvent"))
 
 local ModuleSandbox = NexusInstance:Extend()
 ModuleSandbox:SetClassName("ModuleSandbox")
@@ -17,7 +16,7 @@ ModuleSandbox:SetClassName("ModuleSandbox")
 Creates a module sandbox object.
 --]]
 function ModuleSandbox:__new(BaseSandbox)
-    self:InitializeSuper()
+    NexusInstance.__new(self)
     
     --Store the state.
     self.BaseSandbox = BaseSandbox

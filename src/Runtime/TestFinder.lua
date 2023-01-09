@@ -4,9 +4,8 @@ TheNexusAvenger
 Static methods for running unit tests.
 --]]
 
-local NexusUnitTesting = require(script.Parent.Parent:WaitForChild("NexusUnitTestingProject"))
-local NexusInstance = NexusUnitTesting:GetResource("NexusInstance.NexusInstance")
-local ModuleUnitTest = NexusUnitTesting:GetResource("Runtime.ModuleUnitTest")
+local NexusInstance = require(script.Parent.Parent:WaitForChild("NexusInstance"):WaitForChild("NexusInstance"))
+local ModuleUnitTest = require(script.Parent.Parent:WaitForChild("Runtime"):WaitForChild("ModuleUnitTest"))
 
 local Runner = NexusInstance:Extend()
 Runner:SetClassName("Runner")

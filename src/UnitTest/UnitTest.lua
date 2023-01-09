@@ -4,14 +4,22 @@ TheNexusAvenger
 Class representing a unit test.
 --]]
 
-local NexusUnitTesting = require(script.Parent.Parent:WaitForChild("NexusUnitTestingProject"))
-local NexusInstance = NexusUnitTesting:GetResource("NexusInstance.NexusInstance")
-local NexusEvent = NexusUnitTesting:GetResource("NexusInstance.Event.NexusEvent")
-local ModuleSandbox = NexusUnitTesting:GetResource("UnitTest.ModuleSandbox")
-local Equals = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.Equals")
-local IsClose = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.IsClose")
-local ErrorAssertor = NexusUnitTesting:GetResource("UnitTest.AssertionHelper.ErrorAssertor")
-local TestEZ = NexusUnitTesting:GetResource("TestEZ")
+local TestState = {
+    NotRun = "NOTRUN",
+    InProgress = "INPROGRESS",
+    Passed = "PASSED",
+    Failed = "FAILED",
+    Skipped = "SKIPPED",
+}
+
+local NexusUnitTestingModule = script.Parent.Parent
+local NexusInstance = require(NexusUnitTestingModule:WaitForChild("NexusInstance"):WaitForChild("NexusInstance"))
+local NexusEvent = require(NexusUnitTestingModule:WaitForChild("NexusInstance"):WaitForChild("Event"):WaitForChild("NexusEvent"))
+local ModuleSandbox = require(NexusUnitTestingModule:WaitForChild("UnitTest"):WaitForChild("ModuleSandbox"))
+local Equals = require(NexusUnitTestingModule:WaitForChild("UnitTest"):WaitForChild("AssertionHelper"):WaitForChild("Equals"))
+local IsClose = require(NexusUnitTestingModule:WaitForChild("UnitTest"):WaitForChild("AssertionHelper"):WaitForChild("IsClose"))
+local ErrorAssertor = require(NexusUnitTestingModule:WaitForChild("UnitTest"):WaitForChild("AssertionHelper"):WaitForChild("ErrorAssertor"))
+local TestEZ = require(NexusUnitTestingModule:WaitForChild("TestEZ"))
 
 local UnitTest = NexusInstance:Extend()
 UnitTest:SetClassName("UnitTest")
@@ -22,11 +30,11 @@ setmetatable(UnitTest.FunctionToUnitTest, {__mode="kv"})
 
 
 local UNIT_TEST_STATE_PRIORITY = {
-    [NexusUnitTesting.TestState.NotRun] = 1,
-    [NexusUnitTesting.TestState.Passed] = 2,
-    [NexusUnitTesting.TestState.Skipped] = 3,
-    [NexusUnitTesting.TestState.Failed] = 4,
-    [NexusUnitTesting.TestState.InProgress] = 5,
+    [TestState.NotRun] = 1,
+    [TestState.Passed] = 2,
+    [TestState.Skipped] = 3,
+    [TestState.Failed] = 4,
+    [TestState.InProgress] = 5,
 }
 
 
@@ -35,12 +43,12 @@ local UNIT_TEST_STATE_PRIORITY = {
 Creates a unit test object.
 --]]
 function UnitTest:__new(Name, RunDirectly)
-    self:InitializeSuper()
+    NexusInstance.__new(self)
 
     --Store the state.
     self.Name = Name
-    self.State = NexusUnitTesting.TestState.NotRun
-    self.CombinedState = NexusUnitTesting.TestState.NotRun
+    self.State = TestState.NotRun
+    self.CombinedState = TestState.NotRun
     self.SubTests = {}
     self.Output = {}
     self.Sandbox = ModuleSandbox.new()
@@ -109,7 +117,7 @@ function UnitTest:WrapTestEZNodeEnvironment(CurrentNode)
         NewTest.IsInternal = true
         NewTest.Run = Callback
         if NodeModifier == TestEZ.TestEnum.NodeModifier.Skip or CurrentNode.modifier == TestEZ.TestEnum.NodeModifier.Skip then
-            NewTest.State = NexusUnitTesting.TestState.Skipped
+            NewTest.State = TestState.Skipped
         end
         ParentTest:RegisterUnitTest(NewTest)
 
@@ -121,8 +129,8 @@ function UnitTest:WrapTestEZNodeEnvironment(CurrentNode)
             NewTest:RunTest()
 
             --Update the state.
-            if Node.modifier == TestEZ.TestEnum.NodeModifier.Skip or ParentTest.State == NexusUnitTesting.TestState.Skipped then
-                NewTest.State = NexusUnitTesting.TestState.Skipped
+            if Node.modifier == TestEZ.TestEnum.NodeModifier.Skip or ParentTest.State == TestState.Skipped then
+                NewTest.State = TestState.Skipped
             end
         end
         for Key, Value in pairs(Node.environment) do
@@ -192,7 +200,7 @@ function UnitTest:AddTestEZOverrides()
     self:WrapTestEZTestNode(TestPlan)
     local TestNode = TestPlan:addChild(self.Name, TestEZ.TestEnum.NodeType.Describe)
     TestNode.callback = function()
-        self.object:Run()
+        self:Run()
     end
     self.TestNode = TestNode
     self.TestPlan = TestPlan
@@ -318,7 +326,7 @@ function UnitTest:BaseRunTest()
         self.TestNode:expand()
         TestEZ.TestRunner.runPlan(self.TestPlan)
         if self.TestNode.loadError then
-            self.State = NexusUnitTesting.TestState.Failed
+            self.State = TestState.Failed
             self:OutputMessage(Enum.MessageType.MessageError, self.TestNode.loadError)
         end
     else
@@ -332,7 +340,7 @@ to run tests since it is intended to be used by the
 view to run tests.
 --]]
 function UnitTest:RunTest()
-    self.State = NexusUnitTesting.TestState.InProgress
+    self.State = TestState.InProgress
     
     --Wrap the methods.
     self:WrapEnvironment(self.Setup)
@@ -364,13 +372,13 @@ function UnitTest:RunTest()
                     self:OutputMessage(Enum.MessageType.MessageInfo,Line)
                 end
             end
-            self.State = NexusUnitTesting.TestState.Failed
+            self.State = TestState.Failed
         end)
         
         self.SectionFinished:Fire()
     end)
     WaitForSectionToFinish()
-    if self.State ~= NexusUnitTesting.TestState.InProgress then SectionFinishedConnection:Disconnect() return end
+    if self.State ~= TestState.InProgress then SectionFinishedConnection:Disconnect() return end
     
     --Run the test.
     local TestWorked = true
@@ -384,7 +392,7 @@ function UnitTest:RunTest()
                     self:OutputMessage(Enum.MessageType.MessageInfo,Line)
                 end
             end
-            self.State = NexusUnitTesting.TestState.Failed
+            self.State = TestState.Failed
         end)
         
         self.SectionFinished:Fire()
@@ -403,7 +411,7 @@ function UnitTest:RunTest()
                     self:OutputMessage(Enum.MessageType.MessageInfo,Line)
                 end
             end
-            self.State = NexusUnitTesting.TestState.Failed
+            self.State = TestState.Failed
         end)
     
         self.SectionFinished:Fire()
@@ -411,8 +419,8 @@ function UnitTest:RunTest()
     WaitForSectionToFinish()
     
     --Mark the test as successful.
-    if self.State == NexusUnitTesting.TestState.InProgress and TestWorked and TeardownWorked then
-        self.State = NexusUnitTesting.TestState.Passed
+    if self.State == TestState.InProgress and TestWorked and TeardownWorked then
+        self.State = TestState.Passed
     end
     
     --Disconnect the event.
@@ -424,11 +432,11 @@ Runs all of the subtests.
 --]]
 function UnitTest:RunSubtests()
     if #self.SubTests > 0 then
-        self.CombinedState = NexusUnitTesting.TestState.InProgress
+        self.CombinedState = TestState.InProgress
         
         --Run the subtests to get the tests.
         for _,Test in pairs(self.SubTests) do
-            if Test.State == NexusUnitTesting.TestState.NotRun and not Test.IsInternal then
+            if Test.State == TestState.NotRun and not Test.IsInternal then
                 Test:RunTest()
             end
         end
@@ -504,7 +512,7 @@ Stops the asserting thread if the
 test is completed.
 --]]
 function UnitTest:StopAssertionIfCompleted()
-    if self.State == NexusUnitTesting.TestState.Passed or self.State == NexusUnitTesting.TestState.Failed or self.State == NexusUnitTesting.TestState.Skipped then
+    if self.State == TestState.Passed or self.State == TestState.Failed or self.State == TestState.Skipped then
         coroutine.yield()
     end
 end
@@ -514,7 +522,7 @@ Marks a unit test as passed.
 --]]
 function UnitTest:Pass(Reason)
     self:StopAssertionIfCompleted()
-    self.State = NexusUnitTesting.TestState.Passed
+    self.State = TestState.Passed
     
     --Print the reason for passing.
     if Reason ~= nil then
@@ -531,7 +539,7 @@ Marks a unit test as failed.
 --]]
 function UnitTest:Fail(Reason)
     self:StopAssertionIfCompleted()
-    self.State = NexusUnitTesting.TestState.Failed
+    self.State = TestState.Failed
     
     --Add a reason if none exists.
     if Reason == nil then
@@ -547,7 +555,7 @@ Marks a unit test as skipped.
 --]]
 function UnitTest:Skip(Reason)
     self:StopAssertionIfCompleted()
-    self.State = NexusUnitTesting.TestState.Skipped
+    self.State = TestState.Skipped
     
     --Print the reason for skipping.
     if Reason ~= nil then

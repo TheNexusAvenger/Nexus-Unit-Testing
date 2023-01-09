@@ -4,8 +4,7 @@ TheNexusAvenger
 Controls the unit tests of a ModuleScript.
 --]]
 
-local NexusUnitTesting = require(script.Parent.Parent:WaitForChild("NexusUnitTestingProject"))
-local UnitTest = NexusUnitTesting:GetResource("UnitTest.UnitTest")
+local UnitTest = require(script.Parent.Parent:WaitForChild("UnitTest"):WaitForChild("UnitTest"))
 
 local ModuleUnitTest = UnitTest:Extend()
 ModuleUnitTest:SetClassName("ModuleUnitTest")
@@ -16,7 +15,7 @@ ModuleUnitTest:SetClassName("ModuleUnitTest")
 Creates a module unit test object.
 --]]
 function ModuleUnitTest:__new(ModuleScript)
-    self:InitializeSuper(ModuleScript:GetFullName())
+    UnitTest.__new(self, ModuleScript:GetFullName())
     
     --Store the module.
     self.ModuleScript = ModuleScript

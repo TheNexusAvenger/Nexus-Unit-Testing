@@ -6,8 +6,7 @@ Tests the TestFinder class.
 
 local NexusUnitTesting = require("NexusUnitTesting")
 
-local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("NexusUnitTestingProject"))
-local TestFinder = NexusUnitTestingProject:GetResource("Runtime.TestFinder")
+local TestFinder = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("Runtime"):WaitForChild("TestFinder"))
 
 
 

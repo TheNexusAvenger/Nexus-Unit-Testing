@@ -6,8 +6,16 @@ Tests the UnitTest class.
 
 local NexusUnitTesting = require("NexusUnitTesting")
 
-local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("NexusUnitTestingProject"))
-local UnitTestClass = NexusUnitTestingProject:GetResource("UnitTest.UnitTest")
+local NexusUnitTestingProject = {
+    TestState = {
+        NotRun = "NOTRUN",
+        InProgress = "INPROGRESS",
+        Passed = "PASSED",
+        Failed = "FAILED",
+        Skipped = "SKIPPED",
+    },
+}
+local UnitTestClass = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("UnitTest"):WaitForChild("UnitTest"))
 
 
 

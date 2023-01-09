@@ -4,9 +4,7 @@ TheNexusAvenger
 Class for asserting errors are correct.
 --]]
 
-local NexusUnitTesting = require(script.Parent.Parent.Parent:WaitForChild("NexusUnitTestingProject"))
-local NexusInstance = NexusUnitTesting:GetResource("NexusInstance.NexusInstance")
-
+local NexusInstance = require(script.Parent.Parent.Parent:WaitForChild("NexusInstance"):WaitForChild("NexusInstance"))
 
 local ErrorAssertor = NexusInstance:Extend()
 ErrorAssertor:SetClassName("ErrorAssertor")
@@ -17,7 +15,7 @@ ErrorAssertor:SetClassName("ErrorAssertor")
 Creates an error assertor object.
 --]]
 function ErrorAssertor:__new(Error)
-    self:InitializeSuper()
+    NexusInstance.__new(self)
     
     --Store the error.
     self.Error = Error

@@ -5,9 +5,6 @@
         "NexusInstance": {
             "$path": "module/Nexus-Instance/"
         },
-        "NexusProject": {
-            "$path": "module/Nexus-Project/"
-        },
         "TestEZ": {
             "$path": "module/TestEZ/"
         }

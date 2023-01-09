@@ -6,8 +6,8 @@ Tests the UnitTest class.
 
 local NexusUnitTesting = require("NexusUnitTesting")
 
-local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("NexusUnitTestingProject"))
-local ModuleUnitTest = NexusUnitTestingProject:GetResource("Runtime.ModuleUnitTest")
+local NexusUnitTestingProject = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"))
+local ModuleUnitTest = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("Runtime"):WaitForChild("ModuleUnitTest"))
 
 
 

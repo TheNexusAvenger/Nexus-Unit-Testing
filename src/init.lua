@@ -4,8 +4,17 @@ TheNexusAvenger
 Base module for NexusUnitTesting.
 --]]
 
-local NexusUnitTesting = require(script:WaitForChild("NexusUnitTestingProject"))
-local TestFinder = NexusUnitTesting:GetResource("Runtime.TestFinder")
+local TestFinder = require(script:WaitForChild("Runtime"):WaitForChild("TestFinder"))
+
+local NexusUnitTesting = {
+    TestState = {
+        NotRun = "NOTRUN",
+        InProgress = "INPROGRESS",
+        Passed = "PASSED",
+        Failed = "FAILED",
+        Skipped = "SKIPPED",
+    },
+}
 
 
 
