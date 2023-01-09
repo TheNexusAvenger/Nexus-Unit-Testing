@@ -3,35 +3,41 @@ TheNexusAvenger
 
 Sandboxes requiring ModuleScripts to prevent caching.
 --]]
+--!strict
 
-local NexusInstance = require(script.Parent.Parent:WaitForChild("NexusInstance"):WaitForChild("NexusInstance"))
 local NexusEvent = require(script.Parent.Parent:WaitForChild("NexusInstance"):WaitForChild("Event"):WaitForChild("NexusEvent"))
 
-local ModuleSandbox = NexusInstance:Extend()
-ModuleSandbox:SetClassName("ModuleSandbox")
+local ModuleSandbox = {}
+ModuleSandbox.__index = ModuleSandbox
+
+export type ModuleSandbox = {
+    new: (BaseSandbox: ModuleSandbox?) -> (ModuleSandbox),
+
+    BaseSandbox: ModuleSandbox?,
+    ModuleLoaded: NexusEvent.NexusEvent<>,
+    GetModule: (self: ModuleSandbox, Module: ModuleScript) -> (boolean, ModuleScript?),
+    RequireModule: (self: ModuleSandbox, Module: ModuleScript, EnvironmentOverrides: {[string]: any}?) -> (any),
+}
 
 
 
 --[[
 Creates a module sandbox object.
 --]]
-function ModuleSandbox:__new(BaseSandbox)
-    NexusInstance.__new(self)
-    
-    --Store the state.
-    self.BaseSandbox = BaseSandbox
-    self.ModulesLoaded = {}
-    self.CachedModules = {}
-    
-    --Create the events.
-    self.ModuleLoaded = NexusEvent.new()
+function ModuleSandbox.new(BaseSandbox: ModuleSandbox?): ModuleSandbox
+    return (setmetatable({
+        BaseSandbox = BaseSandbox,
+        ModulesLoaded = {},
+        CachedModules = {},
+        ModuleLoaded = NexusEvent.new(),
+    }, ModuleSandbox) :: any) :: ModuleSandbox
 end
 
 --[[
 Gets a module. Returns if a module existed
 and what it returned.
 --]]
-function ModuleSandbox:GetModule(Module)
+function ModuleSandbox:GetModule(Module: ModuleScript): (boolean, ModuleScript?)
     --Wait for a module to load.
     if self.ModulesLoaded[Module] == false then
         while self.ModulesLoaded[Module] == false do
@@ -41,7 +47,7 @@ function ModuleSandbox:GetModule(Module)
     
     --Return the loaded module.
     if self.ModulesLoaded[Module] then
-        return true,self.CachedModules[Module]
+        return true, self.CachedModules[Module]
     end
     
     --Return the base's return.
@@ -50,13 +56,13 @@ function ModuleSandbox:GetModule(Module)
     end
     
     --Return false (not loaded).
-    return false,nil
+    return false, nil
 end
 
 --[[
 Requires a module.
 --]]
-function ModuleSandbox:RequireModule(Module,EnvironmentOverrides)
+function ModuleSandbox:RequireModule(Module: ModuleScript, EnvironmentOverrides: {[string]: any}?): any
     EnvironmentOverrides = EnvironmentOverrides or {}
     
     --Return an existing value.
@@ -74,9 +80,9 @@ function ModuleSandbox:RequireModule(Module,EnvironmentOverrides)
     self.ModulesLoaded[Module] = false
     local BaseEnvironment = getfenv()
     local Environment = setmetatable({},{
-        __index = function(_,Index)
+        __index = function(_, Index: string): any
             --Return the base override.
-            local Override = EnvironmentOverrides[Index]
+            local Override = (EnvironmentOverrides :: {[string]: any})[Index]
             if Override then
                 return Override
             end
@@ -110,7 +116,7 @@ function ModuleSandbox:RequireModule(Module,EnvironmentOverrides)
     if BaseRequire then
         self.CachedModules[Module] = BaseRequire(ClonedModule)
     else
-        self.CachedModules[Module] = require(ClonedModule)
+        self.CachedModules[Module] = require(ClonedModule) :: any
     end
     
     --Set it as loaded.
