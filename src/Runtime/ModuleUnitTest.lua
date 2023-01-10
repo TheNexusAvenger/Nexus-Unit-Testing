@@ -3,18 +3,24 @@ TheNexusAvenger
 
 Controls the unit tests of a ModuleScript.
 --]]
+--!strict
 
 local UnitTest = require(script.Parent.Parent:WaitForChild("UnitTest"):WaitForChild("UnitTest"))
 
 local ModuleUnitTest = UnitTest:Extend()
 ModuleUnitTest:SetClassName("ModuleUnitTest")
 
+export type ModuleUnitTest = {
+    new: (ModuleScript: ModuleScript) -> ModuleUnitTest,
+    Extend: (self: ModuleUnitTest) -> ModuleUnitTest,
+} & UnitTest.UnitTest
+
 
 
 --[[
 Creates a module unit test object.
 --]]
-function ModuleUnitTest:__new(ModuleScript)
+function ModuleUnitTest:__new(ModuleScript: ModuleScript): ()
     UnitTest.__new(self, ModuleScript:GetFullName())
     
     --Store the module.
@@ -25,7 +31,7 @@ end
 Runs the test.
 If the setup fails, the test is not continued.
 --]]
-function ModuleUnitTest:Run()
+function ModuleUnitTest:Run(): ()
     --Create the environment overrides.
     local EnvironmentOverrides = {}
     EnvironmentOverrides["plugin"] = plugin
@@ -38,21 +44,21 @@ function ModuleUnitTest:Run()
         end
 
         --Return the base require.
-        return self.Sandbox:RequireModule(Module,EnvironmentOverrides)
+        return self.Sandbox:RequireModule(Module, EnvironmentOverrides)
     end
     EnvironmentOverrides["print"] = function(...)
-        self:GetOutputTest():OutputMessage(Enum.MessageType.MessageOutput,...)
+        self:GetOutputTest():OutputMessage(Enum.MessageType.MessageOutput, ...)
     end
     EnvironmentOverrides["warn"] = function(...)
-        self:GetOutputTest():OutputMessage(Enum.MessageType.MessageWarning,...)
+        self:GetOutputTest():OutputMessage(Enum.MessageType.MessageWarning, ...)
     end
 
     --Require the module.
-    local TestReturn = self.Sandbox:RequireModule(self.ModuleScript,EnvironmentOverrides)
+    local TestReturn = self.Sandbox:RequireModule(self.ModuleScript, EnvironmentOverrides)
 
     --Call the function if a function was returend (used by TestEZ)
     if type(TestReturn) == "function" then
-        self:WrapEnvironment(TestReturn,{
+        self:WrapEnvironment(TestReturn, {
             ["script"] = self.ModuleScript,
             ["require"] = EnvironmentOverrides["require"],
         })
@@ -62,4 +68,4 @@ end
 
 
 
-return ModuleUnitTest
+return (ModuleUnitTest :: any) :: ModuleUnitTest

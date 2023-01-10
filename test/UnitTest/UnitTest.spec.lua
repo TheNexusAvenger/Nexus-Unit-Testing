@@ -5,12 +5,12 @@ Tests the UnitTest class.
 --]]
 --!strict
 
-local UnitTest_TODO_RENAME = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("UnitTest"):WaitForChild("UnitTest"))
+local UnitTest = require(game:GetService("ReplicatedStorage"):WaitForChild("NexusUnitTesting"):WaitForChild("UnitTest"):WaitForChild("UnitTest"))
 
 return function()
     local TestUnitTest = nil
     beforeEach(function()
-        TestUnitTest = UnitTest_TODO_RENAME.new("TestName")
+        TestUnitTest = UnitTest.new("TestName")
     end)
 
     describe("A unit test", function()
@@ -237,14 +237,14 @@ return function()
         end)
 
         it("should register subtests with test classes.", function()
-            TestUnitTest:RegisterUnitTest(UnitTest_TODO_RENAME.new("TestName2"))
+            TestUnitTest:RegisterUnitTest(UnitTest.new("TestName2"))
             expect((TestUnitTest.SubTests :: any)[1].Name).to.equal("TestName2")
         end)
 
         it("should update the combined state correctly.", function()
             --Create additional tests.
-            local UnitTest2 = UnitTest_TODO_RENAME.new("TestName")
-            local UnitTest3 = UnitTest_TODO_RENAME.new("TestName")
+            local UnitTest2 = UnitTest.new("TestName")
+            local UnitTest3 = UnitTest.new("TestName")
             TestUnitTest:RegisterUnitTest(UnitTest2)
             TestUnitTest:RegisterUnitTest(UnitTest3)
             
@@ -270,8 +270,8 @@ return function()
 
         it("should run subtests with no failures.", function()
             --Create additional tests.
-            local UnitTest2 = UnitTest_TODO_RENAME.new("TestName")
-            local UnitTest3 = UnitTest_TODO_RENAME.new("TestName")
+            local UnitTest2 = UnitTest.new("TestName")
+            local UnitTest3 = UnitTest.new("TestName")
             TestUnitTest:RegisterUnitTest(UnitTest2)
             TestUnitTest:RegisterUnitTest(UnitTest3)
 
@@ -288,11 +288,11 @@ return function()
 
         it("should run subtests with failures.", function()
             --Create additional tests.
-            local UnitTest2 = UnitTest_TODO_RENAME.new("TestName"):SetSetup(function()
+            local UnitTest2 = UnitTest.new("TestName"):SetSetup(function()
                 expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
                 error("Test failure")
             end)
-            local UnitTest3 = UnitTest_TODO_RENAME.new("TestName"):SetSetup(function()
+            local UnitTest3 = UnitTest.new("TestName"):SetSetup(function()
                 expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
             end)
             TestUnitTest:RegisterUnitTest(UnitTest2)
@@ -318,7 +318,7 @@ return function()
                     warn("Test")
                 end
 
-                local SubTest = UnitTest_TODO_RENAME.new("TestName2")
+                local SubTest = UnitTest.new("TestName2")
                 SubTest.MessageOutputted:Connect(function(Message, Type)
                     table.insert(OutputInformation, {Message = Message, Type = Type})
                 end)
