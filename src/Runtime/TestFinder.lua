@@ -3,12 +3,11 @@ TheNexusAvenger
 
 Static methods for running unit tests.
 --]]
+--!strict
 
-local NexusInstance = require(script.Parent.Parent:WaitForChild("NexusInstance"):WaitForChild("NexusInstance"))
 local ModuleUnitTest = require(script.Parent.Parent:WaitForChild("Runtime"):WaitForChild("ModuleUnitTest"))
 
-local Runner = NexusInstance:Extend()
-Runner:SetClassName("Runner")
+local TestFinder = {}
 
 
 
@@ -17,15 +16,15 @@ Returns a list of tests for all of the
 ModuleScripts in the game or the given
 container instance.
 --]]
-function Runner.GetTests(Container)
+function TestFinder.GetTests(Container: Instance?)
     Container = Container or game
 
     --Get all the tests in the game.
     local Tests = {}
-    for _,Module in pairs(Container:GetDescendants()) do
+    for _, Module in (Container :: Instance):GetDescendants() do
         pcall(function()
             if Module:IsA("ModuleScript") and (Module.Name:match("%.spec$") or Module.Name:match("%.nexusspec$")) then
-                table.insert(Tests,ModuleUnitTest.new(Module))
+                table.insert(Tests, ModuleUnitTest.new(Module))
             end
         end)
     end
@@ -36,4 +35,4 @@ end
 
 
 
-return Runner
+return TestFinder
