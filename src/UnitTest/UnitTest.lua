@@ -73,10 +73,6 @@ export type UnitTest = {
 
 
 
-
-
-
-
 --[[
 Creates a unit test object.
 --]]
@@ -740,12 +736,12 @@ function UnitTest:AssertClose<T>(ExpectedObject: T, ActualObject: T, Epsilon: nu
         end
         
         --Determine if they are close.
-        local Result = IsClose(ExpectedObject, ActualObject, Epsilon :: number)
-        if Result == nil then
+        local Result, _ = IsClose.IsClose(ExpectedObject, ActualObject, Epsilon :: number)
+        if Result == "UNSUPPORTED_TYPE" or Result == "DIFFERENT_TYPES" then
             self:Fail("Two objects can't be compared for closeness."..Comparison)
         end
         
-        return Result
+        return Result == "CLOSE"
     end
     
     --Run the assertion.
@@ -776,12 +772,12 @@ function UnitTest:AssertNotClose<T>(ExpectedObject: T, ActualObject: T, Epsilon:
         end
         
         --Determine if they are close.
-        local Result = IsClose(ExpectedObject, ActualObject, Epsilon :: number)
-        if Result == nil then
+        local Result, _ = IsClose.IsNotClose(ExpectedObject, ActualObject, Epsilon :: number)
+        if Result == "UNSUPPORTED_TYPE" or Result == "DIFFERENT_TYPES" then
             self:Fail("Two objects can't be compared for closeness."..Comparison)
         end
         
-        return not Result
+        return Result == "NOT_CLOSE"
     end
     
     --Run the assertion.
