@@ -43,6 +43,7 @@ export type UnitTest = {
     Overrides: {[string]: any},
     TestAdded: NexusEvent.NexusEvent<UnitTest>,
     MessageOutputted: NexusEvent.NexusEvent<Enum.MessageType, string>,
+    TestEZExtensionsEnabled: boolean,
     Setup: (self: UnitTest) -> (),
     Run: (self: UnitTest) -> (),
     Teardown: (self: UnitTest) -> (),
@@ -86,6 +87,7 @@ function UnitTest:__new(Name: string, RunDirectly: boolean?): ()
     self.SubTests = {}
     self.Output = {}
     self.Sandbox = ModuleSandbox.new()
+    self.TestEZExtensionsEnabled = false
 
     --Store the overrides.
     self.Overrides = {
@@ -134,6 +136,50 @@ function UnitTest:GetOutputTest(): UnitTest
 end
 
 --[[
+Adds the TestEZ extensions to TestEZ.
+--]]
+function UnitTest:AddTestEZExtensions(Expectation: any): ()
+    --[[
+	Returns a version of the given method that can be called with either . or :
+    Taken from TestEZ.
+    --]]
+    local function bindSelf(self, method)
+        return function(firstArg, ...)
+            if firstArg == self then
+                return method(self, ...)
+            else
+                return method(self, firstArg, ...)
+            end
+        end
+    end
+
+    --Add the extension for near to have non-numbers.
+    local CurrentUnitTest = self
+    local OriginalNear = Expectation.near
+    Expectation.near = bindSelf(Expectation, function(self, OtherValue: any, Limit: number?): any
+        if CurrentUnitTest.TestEZExtensionsEnabled then
+            local ErrorMessage = IsClose.FormatTestEZMessage(self.value, OtherValue, (Limit or 1e-7) :: number, self.successCondition and "CLOSE" or "NOT_CLOSE")
+            if ErrorMessage ~= nil then
+                error(ErrorMessage)
+            end
+        else
+            return OriginalNear(self, OtherValue, Limit)
+        end
+        return self
+    end)
+
+    --Replace __index for negations.
+    local ExistingIndex = getmetatable(Expectation).__index
+    getmetatable(Expectation).__index = function(self, key: string): any
+        local OriginalIndex = ExistingIndex(self, key)
+        if key == "never" then
+            CurrentUnitTest:AddTestEZExtensions(OriginalIndex)
+        end
+        return OriginalIndex
+    end
+end
+
+--[[
 Wraps a TestEZ environment.
 --]]
 function UnitTest:WrapTestEZNodeEnvironment(CurrentNode: any): ()
@@ -149,6 +195,7 @@ function UnitTest:WrapTestEZNodeEnvironment(CurrentNode: any): ()
         local ParentTest = CurrentNode.NexusUnitTest
         local NewTest = (UnitTest :: any).new(Phrase, true)
         NewTest.IsInternal = true
+        NewTest.TestEZExtensionsEnabled = self.TestEZExtensionsEnabled
         NewTest.Run = Callback
         if NodeModifier == TestEZ.TestEnum.NodeModifier.Skip or CurrentNode.modifier == TestEZ.TestEnum.NodeModifier.Skip then
             NewTest.State = "SKIPPED"
@@ -210,6 +257,13 @@ function UnitTest:WrapTestEZNodeEnvironment(CurrentNode: any): ()
     Environment.xit = Environment.itSKIP
     Environment.fdescribe = Environment.describeFOCUS
     Environment.xdescribe = Environment.describeSKIP
+
+    --Replace Expectation creation for extensions.
+    getmetatable(Environment.expect).__call = function(_, ...)
+        local Expectation = TestEZ.Expectation.new(...)
+        self:AddTestEZExtensions(Expectation)
+        return Expectation
+    end
 end
 
 --[[
@@ -772,7 +826,7 @@ function UnitTest:AssertNotClose<T>(ExpectedObject: T, ActualObject: T, Epsilon:
         end
         
         --Determine if they are close.
-        local Result, _ = IsClose.IsNotClose(ExpectedObject, ActualObject, Epsilon :: number)
+        local Result, _ = IsClose.IsClose(ExpectedObject, ActualObject, Epsilon :: number)
         if Result == "UNSUPPORTED_TYPE" or Result == "DIFFERENT_TYPES" then
             self:Fail("Two objects can't be compared for closeness."..Comparison)
         end

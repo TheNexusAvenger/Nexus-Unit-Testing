@@ -22,6 +22,9 @@ Creates a module unit test object.
 --]]
 function ModuleUnitTest:__new(ModuleScript: ModuleScript): ()
     UnitTest.__new(self, ModuleScript:GetFullName())
+    if string.find(string.lower(ModuleScript.Source), "%-%-%$nexusunittestextensions") then
+        self.TestEZExtensionsEnabled = true
+    end
     
     --Store the module.
     self.ModuleScript = ModuleScript

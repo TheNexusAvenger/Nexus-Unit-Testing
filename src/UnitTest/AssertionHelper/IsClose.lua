@@ -122,29 +122,27 @@ function IsCloseModule.IsClose<T>(Object1: T, Object2: T, Epsilon: number): (str
 end
 
 --[[
-Returns a string result for the match and an optional
-list of keys that don't match based on if the values
-are not close.
+Formats a message for TestEZ.
 --]]
-function IsCloseModule.IsNotClose<T>(Object1: T, Object2: T, Epsilon: number): (string, {string}?)
-    --Invert the keys that are not close.
-    local Result, NotCloseKeys = IsCloseModule.IsClose(Object1, Object2, Epsilon)
-    local CloseKeys = nil
-    if NotCloseKeys ~= nil then
-        CloseKeys = {}
-        local NotCloseKeysMap = {}
-        for _, Key in NotCloseKeys do
-            NotCloseKeysMap[Key] = true
-        end
-        local _, ObjectKeys = PROPERTY_TO_LIST[typeof(Object1)](Object1)
-        for _, Key in ObjectKeys do
-            if NotCloseKeysMap[Key] then continue end
-            table.insert(CloseKeys, Key)
-        end
+function IsCloseModule.FormatTestEZMessage<T>(Object1: T, Object2: T, Epsilon: number, TargetResponse: string): string?
+    --Determine the result.
+    local Result, Keys = IsCloseModule.IsClose(Object1, Object2, Epsilon)
+
+    --Return nil the target response is the result.
+    if TargetResponse == Result then
+        return nil
     end
 
-    --Invert the result and return the keys.
-    return Result, CloseKeys
+    --Return a message for unsupported checks.
+    if Result == "DIFFERENT_TYPES" or Result == "UNSUPPORTED_TYPE" then
+        return string.format("Expected value %q (%s) and actual value %q (%s) can't be checked for closeness.", tostring(Object2), typeof(Object2), tostring(Object1), typeof(Object1))
+    end
+
+    --Build and return the message.
+    if Keys == nil then
+        return string.format("Expected value to %s %f (within %f) but got %f instead.", TargetResponse == "CLOSE" and "be near" or "not be near", Object2 :: any, Epsilon, Object1 :: any)
+    end
+    return string.format("Expected value to %s %q (%s) within %f but got %q (%s) instead%s.", TargetResponse == "CLOSE" and "be near" or "not be near", tostring(Object2), typeof(Object2), Epsilon, tostring(Object1), typeof(Object1), TargetResponse == "CLOSE" and " (keys "..table.concat(Keys :: {string}, ", ").." incorrect)" or "")
 end
 
 
