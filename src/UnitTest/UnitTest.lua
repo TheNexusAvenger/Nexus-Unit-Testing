@@ -186,6 +186,36 @@ function UnitTest:AddTestEZExtensions(Expectation: any): ()
         return self
     end)
 
+    --Add the extension for contains with strings and tables.
+    Expectation.contain = bindSelf(Expectation, function(self, OtherValue: any): any
+        if CurrentUnitTest.TestEZExtensionsEnabled then
+            if typeof(self.value) == "string" then
+                --Throw an error if the value is a string and doesn't contain the string.
+                local Index, _ = string.find(self.value, tostring(OtherValue))
+                if self.successCondition and not Index then
+                    error(string.format("String %q does not contain %q when expected.", tostring(self.value), tostring(OtherValue)))
+                elseif not self.successCondition and Index then
+                    error(string.format("String %q contains %q but not expected.", tostring(self.value), tostring(OtherValue)))
+                end
+            elseif typeof(self.value) == "table" then
+                --Throw an error if the value is a table and doesn't contain the value.
+                local Contains = false
+                for _, TableValue in self.value :: {any} do
+                    if TableValue ~= OtherValue then continue end
+                    Contains = true
+                    break
+                end
+                if self.successCondition and not Contains then
+                    error(string.format("Table %q does not contain %q (%s) when expected.", tostring(self.value), tostring(OtherValue), typeof(OtherValue)))
+                elseif not self.successCondition and Contains then
+                    error(string.format("Table %q contains %q (%s) but not expected.", tostring(self.value), tostring(OtherValue), typeof(OtherValue)))
+                end
+            end
+        else
+            error("TestEZ does not have contain. Add --$NexusUnitTestExtensions to the test script to enable Nexus Unit Testing to enable table and string contains.")
+        end
+        return self
+    end)
 
     --Replace __index for negations.
     local ExistingIndex = getmetatable(Expectation).__index
