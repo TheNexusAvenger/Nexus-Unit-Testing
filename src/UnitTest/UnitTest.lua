@@ -163,6 +163,9 @@ function UnitTest:AddTestEZExtensions(Expectation: any): ()
                 error(ErrorMessage)
             end
         else
+            if typeof(self.value) ~= "number" or typeof(OtherValue) ~= "number" then
+                CurrentUnitTest:GetOutputTest():OutputMessage(Enum.MessageType.MessageWarning, "TestEZ near with non-numbers is not supported in TestEZ. Add --$NexusUnitTestExtensions to the test script to enable Nexus Unit Testing to enable comparing non-numbers with near.")
+            end
             return OriginalNear(self, OtherValue, Limit)
         end
         return self

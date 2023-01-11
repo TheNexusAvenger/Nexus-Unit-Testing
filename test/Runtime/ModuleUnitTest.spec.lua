@@ -277,6 +277,7 @@ return function()
             expect(SubTests[1].SubTests[1].State).to.equal("FAILED")
             expect(SubTests[1].SubTests[1].CombinedState).to.equal("FAILED")
             expect(#SubTests[1].SubTests[1].SubTests).to.equal(0)
+            expect(SubTests[1].SubTests[1].Output[1].Message).to.equal("TestEZ near with non-numbers is not supported in TestEZ. Add --$NexusUnitTestExtensions to the test script to enable Nexus Unit Testing to enable comparing non-numbers with near.")
         end)
 
         it("should use extension methods when specified.", function()
