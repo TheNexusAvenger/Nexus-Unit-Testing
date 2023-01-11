@@ -171,6 +171,22 @@ function UnitTest:AddTestEZExtensions(Expectation: any): ()
         return self
     end)
 
+    --Add the extension for deep equals with tables.
+    Expectation.deepEqual = bindSelf(Expectation, function(self, OtherValue: any): any
+        if CurrentUnitTest.TestEZExtensionsEnabled then
+            local DeepEquals = Equals(self.value, OtherValue)
+            if self.successCondition and not DeepEquals then
+                error(string.format("Expected value %q (%s) to deep equal %q (%s).", tostring(OtherValue), type(OtherValue), tostring(self.value), type(self.value)))
+            elseif not self.successCondition and DeepEquals then
+                error(string.format("Expected value %q (%s) to not deep equal %q (%s).", tostring(OtherValue), type(OtherValue), tostring(self.value), type(self.value)))
+            end
+        else
+            error("TestEZ does not have deepEqual. Add --$NexusUnitTestExtensions to the test script to enable Nexus Unit Testing to enable deep equals for tables.")
+        end
+        return self
+    end)
+
+
     --Replace __index for negations.
     local ExistingIndex = getmetatable(Expectation).__index
     getmetatable(Expectation).__index = function(self, key: string): any

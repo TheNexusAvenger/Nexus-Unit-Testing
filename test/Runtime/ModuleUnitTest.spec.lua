@@ -255,45 +255,11 @@ return function()
             Module.Name = "TestModule.spec"
             Module.Source = "return function()"..
                 "describe(\"Test\", function()"..
-                "    it(\"should fail\", function()"..
+                "    it(\"should fail with near.\", function()"..
                 "        expect(Vector3.new()).to.be.near(Vector3.new())"..
                 "    end)"..
-                "end)"..
-                "end"
-            Module.Parent = Folder
-            
-            --Create the test.
-            local TestModuleUnitTest = ModuleUnitTest.new(Module)
-            local SubTests = TestModuleUnitTest.SubTests :: {any}
-            
-            --Assert the test is ran correctly.
-            expect(TestModuleUnitTest.State).to.equal("NOTRUN")
-            expect(TestModuleUnitTest.CombinedState).to.equal("NOTRUN")
-            TestModuleUnitTest:RunTest()
-            expect(#SubTests).to.equal(1)
-            expect(SubTests[1].Name).to.equal("Test")
-            expect(#SubTests[1].SubTests).to.equal(1)
-            expect(SubTests[1].SubTests[1].Name).to.equal("should fail")
-            expect(SubTests[1].SubTests[1].State).to.equal("FAILED")
-            expect(SubTests[1].SubTests[1].CombinedState).to.equal("FAILED")
-            expect(#SubTests[1].SubTests[1].SubTests).to.equal(0)
-            expect(SubTests[1].SubTests[1].Output[1].Message).to.equal("TestEZ near with non-numbers is not supported in TestEZ. Add --$NexusUnitTestExtensions to the test script to enable Nexus Unit Testing to enable comparing non-numbers with near.")
-        end)
-
-        it("should use extension methods when specified.", function()
-            --Create the module.
-            local Folder = Instance.new("Folder")
-            Folder.Name = "TestFolder"
-            local Module = Instance.new("ModuleScript")
-            Module.Name = "TestModule.spec"
-            Module.Source = "--$NexusUnitTestExtensions\nreturn function()"..
-                "describe(\"Test\", function()"..
-                "    it(\"should pass with extensions\", function()"..
-                "        expect(Vector3.new()).to.be.near(Vector3.new())"..
-                "        expect(Vector3.new()).to.never.be.near(Vector3.new(1, 1, 1))"..
-                "    end)"..
-                "    it(\"should fail with extensions\", function()"..
-                "        expect(Vector3.new(1, 1, 1)).to.be.near(Vector3.new(2, 2, 2))"..
+                "    it(\"should fail with deepEqual.\", function()"..
+                "        expect({}).to.deepEqual({})"..
                 "    end)"..
                 "end)"..
                 "end"
@@ -310,14 +276,79 @@ return function()
             expect(#SubTests).to.equal(1)
             expect(SubTests[1].Name).to.equal("Test")
             expect(#SubTests[1].SubTests).to.equal(2)
-            expect(SubTests[1].SubTests[1].Name).to.equal("should pass with extensions")
-            expect(SubTests[1].SubTests[1].State).to.equal("PASSED")
-            expect(SubTests[1].SubTests[1].CombinedState).to.equal("PASSED")
+            expect(SubTests[1].SubTests[1].Name).to.equal("should fail with near.")
+            expect(SubTests[1].SubTests[1].State).to.equal("FAILED")
+            expect(SubTests[1].SubTests[1].CombinedState).to.equal("FAILED")
             expect(#SubTests[1].SubTests[1].SubTests).to.equal(0)
-            expect(SubTests[1].SubTests[2].Name).to.equal("should fail with extensions")
+            expect(SubTests[1].SubTests[1].Output[1].Message).to.equal("TestEZ near with non-numbers is not supported in TestEZ. Add --$NexusUnitTestExtensions to the test script to enable Nexus Unit Testing to enable comparing non-numbers with near.")
+            expect(SubTests[1].SubTests[2].Name).to.equal("should fail with deepEqual.")
             expect(SubTests[1].SubTests[2].State).to.equal("FAILED")
             expect(SubTests[1].SubTests[2].CombinedState).to.equal("FAILED")
             expect(#SubTests[1].SubTests[2].SubTests).to.equal(0)
+            local HasError, _ = string.find(SubTests[1].SubTests[2].Output[1].Message, "TestEZ does not have deepEqual%. Add %-%-%$NexusUnitTestExtensions to the test script to enable Nexus Unit Testing to enable deep equals for tables%.")
+            expect(HasError ~= nil).to.equal(true)
+        end)
+
+        it("should use extension methods when specified.", function()
+            --Create the module.
+            local Folder = Instance.new("Folder")
+            Folder.Name = "TestFolder"
+            local Module = Instance.new("ModuleScript")
+            Module.Name = "TestModule.spec"
+            Module.Source = "--$NexusUnitTestExtensions\nreturn function()"..
+                "describe(\"Test\", function()"..
+                "    it(\"should pass with near.\", function()"..
+                "        expect(Vector3.new()).to.be.near(Vector3.new())"..
+                "        expect(Vector3.new()).to.never.be.near(Vector3.new(1, 1, 1))"..
+                "    end)"..
+                "    it(\"should fail with near.\", function()"..
+                "        expect(Vector3.new(1, 1, 1)).to.be.near(Vector3.new(2, 2, 2))"..
+                "    end)"..
+                "    it(\"should pass with deepEqual.\", function()"..
+                "        expect({1,2,3}).to.deepEqual({1,2,3})"..
+                "        expect({1,2,3}).to.never.deepEqual({1,2,4})"..
+                "    end)"..
+                "    it(\"should fail with deepEqual.\", function()"..
+                "        expect({1,2,3}).to.deepEqual({1,2,4})"..
+                "    end)"..
+                "    it(\"should fail with never deepEqual.\", function()"..
+                "        expect({1,2,3}).to.never.deepEqual({1,2,3})"..
+                "    end)"..
+                "end)"..
+                "end"
+            Module.Parent = Folder
+            
+            --Create the test.
+            local TestModuleUnitTest = ModuleUnitTest.new(Module)
+            local SubTests = TestModuleUnitTest.SubTests :: {any}
+            
+            --Assert the test is ran correctly.
+            expect(TestModuleUnitTest.State).to.equal("NOTRUN")
+            expect(TestModuleUnitTest.CombinedState).to.equal("NOTRUN")
+            TestModuleUnitTest:RunTest()
+            expect(#SubTests).to.equal(1)
+            expect(SubTests[1].Name).to.equal("Test")
+            expect(#SubTests[1].SubTests).to.equal(5)
+            expect(SubTests[1].SubTests[1].Name).to.equal("should pass with near.")
+            expect(SubTests[1].SubTests[1].State).to.equal("PASSED")
+            expect(SubTests[1].SubTests[1].CombinedState).to.equal("PASSED")
+            expect(#SubTests[1].SubTests[1].SubTests).to.equal(0)
+            expect(SubTests[1].SubTests[2].Name).to.equal("should fail with near.")
+            expect(SubTests[1].SubTests[2].State).to.equal("FAILED")
+            expect(SubTests[1].SubTests[2].CombinedState).to.equal("FAILED")
+            expect(#SubTests[1].SubTests[2].SubTests).to.equal(0)
+            expect(SubTests[1].SubTests[3].Name).to.equal("should pass with deepEqual.")
+            expect(SubTests[1].SubTests[3].State).to.equal("PASSED")
+            expect(SubTests[1].SubTests[3].CombinedState).to.equal("PASSED")
+            expect(#SubTests[1].SubTests[3].SubTests).to.equal(0)
+            expect(SubTests[1].SubTests[4].Name).to.equal("should fail with deepEqual.")
+            expect(SubTests[1].SubTests[4].State).to.equal("FAILED")
+            expect(SubTests[1].SubTests[4].CombinedState).to.equal("FAILED")
+            expect(#SubTests[1].SubTests[4].SubTests).to.equal(0)
+            expect(SubTests[1].SubTests[5].Name).to.equal("should fail with never deepEqual.")
+            expect(SubTests[1].SubTests[5].State).to.equal("FAILED")
+            expect(SubTests[1].SubTests[5].CombinedState).to.equal("FAILED")
+            expect(#SubTests[1].SubTests[5].SubTests).to.equal(0)
         end)
     end)
 end
