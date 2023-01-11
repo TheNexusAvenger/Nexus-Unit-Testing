@@ -6,14 +6,10 @@ included utilities can be used with any framework, but are
 intended to be used on the Roblox platform.
 
 ## Documentation
-Documentation for the framework and utilities can be found
-on the [GitHub pages](https://thenexusavenger.github.io/Nexus-Unit-Testing)
-for this project. The [docs folder](docs) can also be used since it has all
-of the markdown files.
+See the [docs](docs) directory for documentation.
 
 ## Contributing
 Both issues and pull requests are accepted for this project.
-More information can be found [here](docs/contributing.md).
 
 ## License
 Nexus Unit Testing is available under the terms of the MIT 
