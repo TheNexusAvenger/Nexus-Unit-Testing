@@ -154,17 +154,17 @@ function UnitTest:AddTestEZExtensions(Expectation: any): ()
     end
 
     --Add the extension for near to have non-numbers.
-    local CurrentUnitTest = self
     local OriginalNear = Expectation.near
     Expectation.near = bindSelf(Expectation, function(self, OtherValue: any, Limit: number?): any
-        if CurrentUnitTest.TestEZExtensionsEnabled then
+        local OutputTest = UnitTest:GetOutputTest()
+        if OutputTest.TestEZExtensionsEnabled then
             local ErrorMessage = IsClose.FormatTestEZMessage(self.value, OtherValue, (Limit or 1e-7) :: number, self.successCondition and "CLOSE" or "NOT_CLOSE")
             if ErrorMessage ~= nil then
                 error(ErrorMessage)
             end
         else
             if typeof(self.value) ~= "number" or typeof(OtherValue) ~= "number" then
-                CurrentUnitTest:GetOutputTest():OutputMessage(Enum.MessageType.MessageWarning, "TestEZ near with non-numbers is not supported in TestEZ. Add --$NexusUnitTestExtensions to the test script to enable Nexus Unit Testing to enable comparing non-numbers with near.")
+                OutputTest:OutputMessage(Enum.MessageType.MessageWarning, "TestEZ near with non-numbers is not supported in TestEZ. Add --$NexusUnitTestExtensions to the test script to enable Nexus Unit Testing to enable comparing non-numbers with near.")
             end
             return OriginalNear(self, OtherValue, Limit)
         end
@@ -173,7 +173,8 @@ function UnitTest:AddTestEZExtensions(Expectation: any): ()
 
     --Add the extension for deep equals with tables.
     Expectation.deepEqual = bindSelf(Expectation, function(self, OtherValue: any): any
-        if CurrentUnitTest.TestEZExtensionsEnabled then
+        local OutputTest = UnitTest:GetOutputTest()
+        if OutputTest.TestEZExtensionsEnabled then
             local DeepEquals = Equals(self.value, OtherValue)
             if self.successCondition and not DeepEquals then
                 error(string.format("Expected value %q (%s) to deep equal %q (%s).", tostring(OtherValue), type(OtherValue), tostring(self.value), type(self.value)))
@@ -188,7 +189,8 @@ function UnitTest:AddTestEZExtensions(Expectation: any): ()
 
     --Add the extension for contains with strings and tables.
     Expectation.contain = bindSelf(Expectation, function(self, OtherValue: any): any
-        if CurrentUnitTest.TestEZExtensionsEnabled then
+        local OutputTest = UnitTest:GetOutputTest()
+        if OutputTest.TestEZExtensionsEnabled then
             if typeof(self.value) == "string" then
                 --Throw an error if the value is a string and doesn't contain the string.
                 local Index, _ = string.find(self.value, tostring(OtherValue))
@@ -218,13 +220,18 @@ function UnitTest:AddTestEZExtensions(Expectation: any): ()
     end)
 
     --Replace __index for negations.
-    local ExistingIndex = getmetatable(Expectation).__index
-    getmetatable(Expectation).__index = function(self, key: string): any
-        local OriginalIndex = ExistingIndex(self, key)
-        if key == "never" then
-            CurrentUnitTest:AddTestEZExtensions(OriginalIndex)
+    local CurrentUnitTest = self
+    local Metatable = getmetatable(Expectation)
+    if not Metatable.__NexusUnitTestingWrapped then
+        local ExistingIndex = Metatable.__index
+        Metatable.__NexusUnitTestingWrapped = true
+        Metatable.__index = function(self, key: string): any
+            local OriginalIndex = ExistingIndex(self, key)
+            if key == "never" then
+                CurrentUnitTest:AddTestEZExtensions(OriginalIndex)
+            end
+            return OriginalIndex
         end
-        return OriginalIndex
     end
 end
 
@@ -455,6 +462,7 @@ function UnitTest:RegisterUnitTest(NewUnitTest: string | UnitTest, Function: (se
     --Add the unit test.
     table.insert(self.SubTests, NewUnitTestObject)
     NewUnitTestObject.Sandbox.BaseSandbox = self.Sandbox
+    NewUnitTestObject.TestEZExtensionsEnabled = self.TestEZExtensionsEnabled
     self.TestAdded:Fire(NewUnitTestObject)
 end
 

@@ -299,7 +299,7 @@ return function()
             local Folder = Instance.new("Folder")
             Folder.Name = "TestFolder"
             local Module = Instance.new("ModuleScript")
-            Module.Name = "TestModule.spec"
+            Module.Name = "TestModuleNEW.spec"
             Module.Source = "--$NexusUnitTestExtensions\nreturn function()"..
                 "describe(\"Test\", function()"..
                 "    it(\"should pass with near.\", function()"..
