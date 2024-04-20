@@ -5,6 +5,7 @@ Class representing a unit test.
 --]]
 --!strict
 
+local LEGACY_NEXUS_UNIT_TEST_ASSERTION_DEPRECATED_MESSAGE = "Nexus Unit Testing's legacy assetions and test setup is deprecated and will be removed in the next update. Please migrate to TestEZ."
 local UNIT_TEST_STATE_PRIORITY = {
     NOTRUN = 1,
     PASSED = 2,
@@ -659,6 +660,15 @@ function UnitTest:UpdateCombinedState(): ()
 end
 
 --[[
+Outputs the Nexus Unit Testing assetion/setup deprecation message if it hasn't been printed already for the test.
+--]]
+function UnitTest:ShowDeprecationWarning(): ()
+    if self.DeprecationWarningShown then return end
+    warn(LEGACY_NEXUS_UNIT_TEST_ASSERTION_DEPRECATED_MESSAGE)
+    self.DeprecationWarningShown = true
+end
+
+--[[
 Stops the asserting thread if the
 test is completed.
 --]]
@@ -672,6 +682,7 @@ end
 Marks a unit test as passed.
 --]]
 function UnitTest:Pass(Reason: string?): ()
+    self:ShowDeprecationWarning()
     self:StopAssertionIfCompleted()
     self.State = "PASSED"
     
@@ -689,6 +700,7 @@ end
 Marks a unit test as failed.
 --]]
 function UnitTest:Fail(Reason: string?): ()
+    self:ShowDeprecationWarning()
     self:StopAssertionIfCompleted()
     self.State = "FAILED"
     
@@ -705,6 +717,7 @@ end
 Marks a unit test as skipped.
 --]]
 function UnitTest:Skip(Reason: string?): ()
+    self:ShowDeprecationWarning()
     self:StopAssertionIfCompleted()
     self.State = "SKIPPED"
     
@@ -722,6 +735,7 @@ end
 Runs an assertion. Displays a message as an error if it fails.
 --]]
 function UnitTest:Assert(Function: () -> (boolean), Message: string?): ()
+    self:ShowDeprecationWarning()
     self:StopAssertionIfCompleted()
     
     --Run the unit test to see if the result is expected.
