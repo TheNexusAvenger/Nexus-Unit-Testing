@@ -5,6 +5,8 @@ Sandboxes requiring ModuleScripts to prevent caching.
 --]]
 --!strict
 
+local ScriptEditorService = game:GetService("ScriptEditorService")
+
 local NexusEvent = require(script.Parent.Parent:WaitForChild("NexusInstance"):WaitForChild("Event"):WaitForChild("NexusEvent"))
 
 local ModuleSandbox = {}
@@ -105,7 +107,7 @@ function ModuleSandbox:RequireModule(Module: ModuleScript, EnvironmentOverrides:
     Module.Archivable = true
     local ClonedModule = Module:Clone()
     _G[ClonedModule] = Environment
-    ClonedModule.Source = "local function Load() "..ClonedModule.Source.."\nend\n\nsetfenv(Load,_G[script])\n_G[script] = nil\nreturn Load()"
+    ClonedModule.Source = "local function Load() "..ScriptEditorService:GetEditorSource(ClonedModule).."\nend\n\nsetfenv(Load,_G[script])\n_G[script] = nil\nreturn Load()"
 
     --Reset the Archivable value.
     Module.Archivable = IsArchivable
