@@ -107,7 +107,7 @@ function ModuleSandbox:RequireModule(Module: ModuleScript, EnvironmentOverrides:
     Module.Archivable = true
     local ClonedModule = Module:Clone()
     _G[ClonedModule] = Environment
-    ClonedModule.Source = "local function Load() "..ScriptEditorService:GetEditorSource(ClonedModule).."\nend\n\nsetfenv(Load,_G[script])\n_G[script] = nil\nreturn Load()"
+    ClonedModule.Source = "local function Load() "..ScriptEditorService:GetEditorSource(Module).."\nend\n\nsetfenv(Load,_G[script])\n_G[script] = nil\nreturn Load()"
 
     --Reset the Archivable value.
     Module.Archivable = IsArchivable
