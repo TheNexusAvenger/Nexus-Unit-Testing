@@ -32,7 +32,6 @@ end
 
 --[[
 Runs the test.
-If the setup fails, the test is not continued.
 --]]
 function ModuleUnitTest:Run(): ()
     --Create the environment overrides.
