@@ -23,7 +23,7 @@ function TestFinder.GetTests(Container: Instance?)
     local Tests = {}
     for _, Module in (Container :: Instance):GetDescendants() do
         pcall(function()
-            if Module:IsA("ModuleScript") and (Module.Name:match("%.spec$") or Module.Name:match("%.nexusspec$")) then
+            if Module:IsA("ModuleScript") and Module.Name:match("%.spec$") then
                 table.insert(Tests, ModuleUnitTest.new(Module))
             end
         end)
