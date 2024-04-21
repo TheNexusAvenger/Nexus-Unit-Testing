@@ -72,21 +72,9 @@ return function()
 
         it("should run tests with no errors.", function()
             --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
+            local TestRun = false
             function TestUnitTest:Run()
                 TestRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
                 expect(TestUnitTest.State).to.equal("INPROGRESS")
                 expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
             end
@@ -97,88 +85,14 @@ return function()
             TestUnitTest:RunTest()
             expect(TestUnitTest.State).to.equal("PASSED")
             expect(TestUnitTest.CombinedState).to.equal("PASSED")
-            expect(SetupRun).to.equal(true)
             expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-
-        it("should stop running a test if the setup fails.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-                error("Fake setup error")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-            end
-    
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("FAILED")
-            expect(TestUnitTest.CombinedState).to.equal("FAILED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(false)
-            expect(TeardownRun).to.equal(false)
         end)
 
         it("should show an error when a test fails.", function()
             --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
+            local TestRun = false
             function TestUnitTest:Run()
                 TestRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-                error("Fake test error")
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-            end
-    
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("FAILED")
-            expect(TestUnitTest.CombinedState).to.equal("FAILED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-
-        it("should show an error when a teardown fails.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
                 expect(TestUnitTest.State).to.equal("INPROGRESS")
                 expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
                 error("Fake test error")
@@ -190,50 +104,7 @@ return function()
             TestUnitTest:RunTest()
             expect(TestUnitTest.State).to.equal("FAILED")
             expect(TestUnitTest.CombinedState).to.equal("FAILED")
-            expect(SetupRun).to.equal(true)
             expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-
-        it("should allow chaining of setters.", function()
-            --Create the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            local function Setup(self)
-                SetupRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-                expect(getfenv().TestOverride).to.equal(4)
-            end
-            
-            local function Run(self)
-                TestRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-                expect(getfenv().TestOverride).to.equal(4)
-            end
-            
-            local function Teardown(self)
-                TeardownRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-                expect(getfenv().TestOverride).to.equal(4)
-            end
-            
-            --Set the test and assert it runs correctly.
-            TestUnitTest:SetSetup(Setup):SetRun(Run):SetTeardown(Teardown):SetEnvironmentOverride("TestOverride", 4)
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-
-        it("should register subtests with name and function inputs.", function()
-            TestUnitTest:RegisterUnitTest("TestName2", function() end)
-            expect((TestUnitTest.SubTests :: any)[1].Name).to.equal("TestName2")
         end)
 
         it("should register subtests with test classes.", function()
@@ -277,8 +148,9 @@ return function()
 
             --Run the subtests and assert the state is correct.
             TestUnitTest.State = ("PASSED" :: any)
+            UnitTest2:RunTest()
+            UnitTest3:RunTest()
             expect(TestUnitTest.CombinedState).to.equal("PASSED")
-            TestUnitTest:RunSubtests()
             expect(TestUnitTest.CombinedState).to.equal("PASSED")
             expect(UnitTest2.State).to.equal("PASSED")
             expect(UnitTest2.CombinedState).to.equal("PASSED")
@@ -288,11 +160,11 @@ return function()
 
         it("should run subtests with failures.", function()
             --Create additional tests.
-            local UnitTest2 = UnitTest.new("TestName"):SetSetup(function()
+            local UnitTest2 = UnitTest.new("TestName"):SetRun(function()
                 expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
                 error("Test failure")
             end)
-            local UnitTest3 = UnitTest.new("TestName"):SetSetup(function()
+            local UnitTest3 = UnitTest.new("TestName"):SetRun(function()
                 expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
             end)
             TestUnitTest:RegisterUnitTest(UnitTest2)
@@ -301,7 +173,8 @@ return function()
             --Run the subtests and assert the state is correct.
             TestUnitTest.State = ("PASSED" :: any)
             expect(TestUnitTest.CombinedState).to.equal("PASSED")
-            TestUnitTest:RunSubtests()
+            UnitTest2:RunTest()
+            UnitTest3:RunTest()
             expect(TestUnitTest.CombinedState).to.equal("FAILED")
             expect(UnitTest2.State).to.equal("FAILED")
             expect(UnitTest2.CombinedState).to.equal("FAILED")
@@ -322,14 +195,15 @@ return function()
                 SubTest.MessageOutputted:Connect(function(Message, Type)
                     table.insert(OutputInformation, {Message = Message, Type = Type})
                 end)
-                self:RegisterUnitTest(SubTest:SetRun(function(UnitTest)
+                SubTest:SetRun(function(UnitTest)
                     Test()
-                end))
+                end)
+                SubTest:RunTest()
             end)
 
             --Run the test and assert the output is correct.
             TestUnitTest:RunTest()
-            TestUnitTest:RunSubtests()
+            task.wait()
             expect(#OutputInformation).to.equal(2)
             expect(OutputInformation[1].Message).to.equal("Test")
             expect(OutputInformation[1].Type).to.equal(Enum.MessageType.MessageOutput)
@@ -351,7 +225,7 @@ return function()
             Module2.Parent = Folder
             
             --Create the test.
-            TestUnitTest:SetSetup(function()
+            TestUnitTest:SetRun(function()
                 expect(require(Module1) :: any).to.equal("TestFolder.Module1")
             end)
             
@@ -364,521 +238,11 @@ return function()
         end)
     end)
 
-    describe("A unit test with manual state changes", function()
-        it("should pass in the setup if used.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-                self:Pass()
-                error("Test continued")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-            end
-            
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(false)
-            expect(TeardownRun).to.equal(false)
-        end)
-
-        it("should pass in the run if used.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-                self:Pass()
-                error("Test continued")
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-            end
-            
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-
-        it("should pass in the teardown if used.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-                self:Pass()
-                error("Test continued")
-            end
-            
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-
-        it("should fail in the setup if used.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-                self:Fail("Fake test failure")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-            end
-            
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("FAILED")
-            expect(TestUnitTest.CombinedState).to.equal("FAILED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(false)
-            expect(TeardownRun).to.equal(false)
-        end)
-
-        it("should fail in the run if used.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-                self:Fail("Fake test failure")
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-            end
-            
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("FAILED")
-            expect(TestUnitTest.CombinedState).to.equal("FAILED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-
-        it("should fail in the teardown if used.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-                self:Fail("Fake test failure")
-            end
-            
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("FAILED")
-            expect(TestUnitTest.CombinedState).to.equal("FAILED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-
-        it("should skip in the setup if used.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-                self:Skip()
-                error("Test continued")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-            end
-            
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("SKIPPED")
-            expect(TestUnitTest.CombinedState).to.equal("SKIPPED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(false)
-            expect(TeardownRun).to.equal(false)
-        end)
-
-        it("should run in the setup if used.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-                self:Skip()
-                error("Test continued")
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-            end
-            
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("SKIPPED")
-            expect(TestUnitTest.CombinedState).to.equal("SKIPPED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-
-        it("should teardown in the setup if used.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-                self:Skip()
-                error("Test continued")
-            end
-            
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("SKIPPED")
-            expect(TestUnitTest.CombinedState).to.equal("SKIPPED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-
-        it("should fail after skipping.", function()
-            --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-            end
-            
-            function TestUnitTest:Run()
-                TestRun = true
-                expect(self.State).to.equal("INPROGRESS")
-                expect(self.CombinedState).to.equal("INPROGRESS")
-                
-                task.spawn(function()
-                    self:Skip()
-                end)
-                
-                task.wait()
-                expect(self.State).to.equal("SKIPPED")
-                expect(self.CombinedState).to.equal("SKIPPED")
-                self:Fail()
-            end
-            
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-                expect(self.State).to.equal("SKIPPED")
-                expect(self.CombinedState).to.equal("SKIPPED")
-            end
-            
-            --Run the test and assert the states are correct.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("SKIPPED")
-            expect(TestUnitTest.CombinedState).to.equal("SKIPPED")
-            expect(SetupRun).to.equal(true)
-            expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
-        end)
-    end)
-
-    describe("A unit test with assertions", function()
-        it("should assert objects are equal.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                self:AssertEquals(true, true, "Bools aren't equal.")
-                self:AssertEquals(0, 0, "Integers aren't equal.")
-                self:AssertEquals({1, 2, 3}, {1, 2, 3}, "Same tables aren't equal.")
-                self:AssertEquals({1, Test = "", 2, 3}, {1, 2, 3, Test = ""}, "Same tables aren't equal.")
-            end)
-            
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-
-        it("should assert objects aren't equal.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                self:AssertNotEquals(0.333, 1 / 3, "Doubles are equal.")
-                self:AssertNotEquals(false, true, "Bools are equal.")
-                self:AssertNotEquals({1, Test = "", 2, 3}, {1, 2, Test = ""}, "Tables are equal.")
-            end)
-            
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-
-        it("should assert objects are the same.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                local Table = {}
-                
-                self:AssertSame(true,true,"Bools aren't the same.")
-                self:AssertSame(0,0,"Integers aren't the same.")
-                self:AssertSame(Table,Table,"Same tables aren't the same.")
-            end)
-
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-
-        it("should assert objects are different.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                self:AssertNotSame(true, false, "Bools are the same.")
-                self:AssertNotSame(0, 0.1, "Integers are the same.")
-                self:AssertNotSame({}, {}, "Tables are the same.")
-            end)
-            
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-
-        it("should assert objects are close.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                self:AssertClose(0.333, 1 / 3, "Doubles aren't close.")
-                self:AssertClose(CFrame.new(1, 2, 3), CFrame.new(1, 2, 3), "CFrames aren't close.")
-                self:AssertClose(Color3.new(0.333, 0.666, 0.999), Color3.new(1 / 3, 2 / 3, 3 / 3), "Color3s aren't close.")
-                self:AssertClose(Ray.new(Vector3.new(), Vector3.new()), Ray.new(Vector3.new(), Vector3.new()), "Rays aren't close.")
-                self:AssertClose(Region3.new(Vector3.new(), Vector3.new()), Region3.new(Vector3.new(), Vector3.new()), "Region3s aren't close.")
-                self:AssertClose(UDim.new(), UDim.new(), "UDims aren't close.")
-                self:AssertClose(UDim2.new(), UDim2.new(), "UDim2s aren't close.")
-                self:AssertClose(Vector2.new(), Vector2.new(), "Vector2s aren't close.")
-                self:AssertClose(Vector3.new(), Vector3.new(), "Vector3s aren't close.")
-            end)
-            
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-
-        it("should assert objects aren't close.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                self:AssertNotClose(0.333, 2 / 3, "Doubles are close.")
-                self:AssertNotClose(CFrame.new(1, 2, 3), CFrame.new(1, 3, 3), "CFrames are close.")
-                self:AssertNotClose(Color3.new(0.333, 0.666, 0.999), Color3.new(2 / 3, 2 / 3, 3 / 3), "Color3s are close.")
-            end)
-            
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-
-        it("should assert values are false.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                self:AssertFalse(false)
-            end)
-            
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-
-        it("should assert values are true.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                self:AssertTrue(true)
-            end)
-            
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-
-        it("should assert objects are nil.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                self:AssertNil(nil)
-            end)
-            
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-
-        it("should assert objects are not nil.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                self:AssertNotNil(true)
-            end)
-            
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-
-        it("should assert errors.", function()
-            --Set up the assertions.
-            TestUnitTest:SetSetup(function(self)
-                self:AssertErrors(function() error("Test error") end):Contains("Test"):Contains("error"):NotContains("something else"):NotEquals("something else")
-            end)
-            
-            --Run the test and assert it passes.
-            expect(TestUnitTest.State).to.equal("NOTRUN")
-            expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
-            TestUnitTest:RunTest()
-            expect(TestUnitTest.State).to.equal("PASSED")
-            expect(TestUnitTest.CombinedState).to.equal("PASSED")
-        end)
-    end)
-
     describe("A unit test with TestEZ", function()
         it("should run TestEZ tests.", function()
             --Set up the methods.
-            local SetupRun, TestRun, TeardownRun = false, false, false
+            local TestRun = false
             local StateTestCompleted, CombinedStateTestCompleted = false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
 
             function TestUnitTest:Run()
                 TestRun = true
@@ -903,35 +267,21 @@ return function()
                 end)
             end
             
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
             --Run the test and assert the states are correct.
             expect(TestUnitTest.State).to.equal("NOTRUN")
             expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
             TestUnitTest:RunTest()
             expect(TestUnitTest.State).to.equal("PASSED")
             expect(TestUnitTest.CombinedState).to.equal("PASSED")
-            expect(SetupRun).to.equal(true)
             expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
             expect(StateTestCompleted).to.equal(true)
             expect(CombinedStateTestCompleted).to.equal(true)
         end)
 
         it("should show failed TestEZ subtests.", function()
             --Set up the methods.
-            local SetupRun,TestRun,TeardownRun = false, false, false
-            local StateTestCompleted,CombinedStateTestCompleted = false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
+            local TestRun = false
+            local StateTestCompleted, CombinedStateTestCompleted = false, false
             function TestUnitTest:Run()
                 TestRun = true
                 
@@ -955,34 +305,20 @@ return function()
                 end)
             end
             
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
             --Run the test and assert the states are correct.
             expect(TestUnitTest.State).to.equal("NOTRUN")
             expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
             TestUnitTest:RunTest()
             expect(TestUnitTest.State).to.equal("PASSED")
             expect(TestUnitTest.CombinedState).to.equal("FAILED")
-            expect(SetupRun).to.equal(true)
             expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
             expect(StateTestCompleted).to.equal(true)
             expect(CombinedStateTestCompleted).to.equal(false)
         end)
 
         it("should show failed TestEZ setups.", function()
             --Set up the methods.
-            local SetupRun,TestRun,TeardownRun = false, false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
+            local TestRun = false
             function TestUnitTest:Run()
                 TestRun = true
                 
@@ -995,33 +331,19 @@ return function()
                 end)
             end
             
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
             --Run the test and assert the states are correct.
             expect(TestUnitTest.State).to.equal("NOTRUN")
             expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
             TestUnitTest:RunTest()
             expect(TestUnitTest.State).to.equal("PASSED")
             expect(TestUnitTest.CombinedState).to.equal("FAILED")
-            expect(SetupRun).to.equal(true)
             expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
         end)
 
         it("should show skipped TestEZ setups.", function()
             --Set up the methods.
-            local SetupRun,TestRun,TeardownRun = false,false,false
-            local StateTestCompleted,CombinedStateTestCompleted = false,false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
+            local TestRun = false
+            local StateTestCompleted, CombinedStateTestCompleted = false,false
             function TestUnitTest:Run()
                 TestRun = true
                 
@@ -1048,35 +370,21 @@ return function()
                 end)
             end
             
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-            
             --Run the test and assert the states are correct.
             expect(TestUnitTest.State).to.equal("NOTRUN")
             expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
             TestUnitTest:RunTest()
             expect(TestUnitTest.State).to.equal("PASSED")
             expect(TestUnitTest.CombinedState).to.equal("SKIPPED")
-            expect(SetupRun).to.equal(true)
             expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
             expect(StateTestCompleted).to.equal(false)
             expect(CombinedStateTestCompleted).to.equal(false)
         end)
 
         it("should show skipped TestEZ tests.", function()
             --Set up the methods.
-            local SetupRun,TestRun,TeardownRun = false, false, false
+            local TestRun = false
             local StateTestCompleted,CombinedStateTestCompleted = false, false
-            function TestUnitTest:Setup()
-                SetupRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-
             function TestUnitTest:Run()
                 TestRun = true
                 
@@ -1101,21 +409,13 @@ return function()
                 end)
             end
 
-            function TestUnitTest:Teardown()
-                TeardownRun = true
-                expect(TestUnitTest.State).to.equal("INPROGRESS")
-                expect(TestUnitTest.CombinedState).to.equal("INPROGRESS")
-            end
-
             --Run the test and assert the states are correct.
             expect(TestUnitTest.State).to.equal("NOTRUN")
             expect(TestUnitTest.CombinedState).to.equal("NOTRUN")
             TestUnitTest:RunTest()
             expect(TestUnitTest.State).to.equal("PASSED")
             expect(TestUnitTest.CombinedState).to.equal("SKIPPED")
-            expect(SetupRun).to.equal(true)
             expect(TestRun).to.equal(true)
-            expect(TeardownRun).to.equal(true)
             expect(StateTestCompleted).to.equal(false)
             expect(CombinedStateTestCompleted).to.equal(true)
         end)

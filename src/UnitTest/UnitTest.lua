@@ -5,7 +5,6 @@ Class representing a unit test.
 --]]
 --!strict
 
-local LEGACY_NEXUS_UNIT_TEST_ASSERTION_DEPRECATED_MESSAGE = "Nexus Unit Testing's legacy assetions and test setup is deprecated and will be removed in the next update. Please migrate to TestEZ."
 local UNIT_TEST_STATE_PRIORITY = {
     NOTRUN = 1,
     PASSED = 2,
@@ -20,7 +19,6 @@ local NexusEvent = require(NexusUnitTestingModule:WaitForChild("NexusInstance"):
 local ModuleSandbox = require(NexusUnitTestingModule:WaitForChild("UnitTest"):WaitForChild("ModuleSandbox"))
 local Equals = require(NexusUnitTestingModule:WaitForChild("UnitTest"):WaitForChild("AssertionHelper"):WaitForChild("Equals"))
 local IsClose = require(NexusUnitTestingModule:WaitForChild("UnitTest"):WaitForChild("AssertionHelper"):WaitForChild("IsClose"))
-local ErrorAssertor = require(NexusUnitTestingModule:WaitForChild("UnitTest"):WaitForChild("AssertionHelper"):WaitForChild("ErrorAssertor"))
 local TestEZ = require(NexusUnitTestingModule:WaitForChild("TestEZ"))
 
 local UnitTest = NexusInstance:Extend()
@@ -45,32 +43,12 @@ export type UnitTest = {
     TestAdded: NexusEvent.NexusEvent<UnitTest>,
     MessageOutputted: NexusEvent.NexusEvent<Enum.MessageType, string>,
     TestEZExtensionsEnabled: boolean,
-    Setup: (self: UnitTest) -> (),
     Run: (self: UnitTest) -> (),
-    Teardown: (self: UnitTest) -> (),
     OutputMessage: (self: UnitTest, Type: Enum.MessageType, ...any) -> (),
     RegisterUnitTest: (self: UnitTest, NewUnitTest: string | UnitTest, Function: (self: UnitTest) -> ()?) -> (),
     RunTest: (self: UnitTest) -> (),
-    RunSubtests: (self: UnitTest) -> (),
     SetEnvironmentOverride: (self: UnitTest, Name: string, Value: any) -> (UnitTest),
-    SetSetup: (self: UnitTest, Method: (UnitTest) -> ()) -> (UnitTest),
     SetRun: (self: UnitTest, Method: (UnitTest) -> ()) -> (UnitTest),
-    SetTeardown: (self: UnitTest, Method: (UnitTest) -> ()) -> (UnitTest),
-    Pass: (self: UnitTest, Reason: string?) -> (),
-    Fail: (self: UnitTest, Reason: string?) -> (),
-    Skip: (self: UnitTest, Reason: string?) -> (),
-    Assert: (self: UnitTest, Function: () -> (boolean), Message: string?) -> (),
-    AssertEquals: <T>(self: UnitTest, ExpectedObject: T, ActualObject: T, Message: string?) -> (),
-    AssertNotEquals: <T>(self: UnitTest, ExpectedObject: T, ActualObject: T, Message: string?) -> (),
-    AssertSame: <T>(self: UnitTest, ExpectedObject: T, ActualObject: T, Message: string?) -> (),
-    AssertNotSame: <T>(self: UnitTest, ExpectedObject: T, ActualObject: T, Message: string?) -> (),
-    AssertClose: <T>(self: UnitTest, ExpectedObject: T, ActualObject: T, Epsilon: number? | string?, Message: string?) -> (),
-    AssertNotClose: <T>(self: UnitTest, ExpectedObject: T, ActualObject: T, Epsilon: number? | string?, Message: string?) -> (),
-    AssertFalse: (self: UnitTest, ActualObject: boolean, Message: string?) -> (),
-    AssertTrue: (self: UnitTest, ActualObject: boolean, Message: string?) -> (),
-    AssertNil: (self: UnitTest, ActualObject: any, Message: string?) -> (),
-    AssertNotNil: (self: UnitTest, ActualObject: any, Message: string?) -> (),
-    AssertErrors: (self: UnitTest, Function: () -> (), Message: string) -> (ErrorAssertor.ErrorAssertor),
 } & NexusInstance.NexusInstance
 
 
@@ -357,25 +335,9 @@ function UnitTest:AddTestEZOverrides(): ()
 end
 
 --[[
-Sets up the test.
---]]
-function UnitTest:Setup(): ()
-    
-end
-
---[[
 Runs the test.
-If the setup fails, the test is not continued.
 --]]
 function UnitTest:Run(): ()
-    
-end
-
---[[
-Tears down the test.
-Invoked regardless of the test passing or failing.
---]]
-function UnitTest:Teardown(): ()
     
 end
 
@@ -465,6 +427,12 @@ function UnitTest:RegisterUnitTest(NewUnitTest: string | UnitTest, Function: (se
     NewUnitTestObject.Sandbox.BaseSandbox = self.Sandbox
     NewUnitTestObject.TestEZExtensionsEnabled = self.TestEZExtensionsEnabled
     self.TestAdded:Fire(NewUnitTestObject)
+    NewUnitTestObject:AddPropertyFinalizer("State", function()
+        self:UpdateCombinedState()
+    end)
+    NewUnitTestObject:AddPropertyFinalizer("CombinedState", function()
+        self:UpdateCombinedState()
+    end)
 end
 
 --[[
@@ -492,115 +460,23 @@ function UnitTest:RunTest(): ()
     self.State = "INPROGRESS"
     
     --Wrap the methods.
-    self:WrapEnvironment(self.Setup)
     self:WrapEnvironment(self.Run)
-    self:WrapEnvironment(self.Teardown)
-    
-    --Setup event listening.
-    local SectionFinished = false
-    local SectionFinishedConnection = self.SectionFinished:Connect(function()
-        SectionFinished = true
-    end)
-    
-    --[[
-    Waits for a section to finish.
-    --]]
-    local function WaitForSectionToFinish()
-        while not SectionFinished do task.wait() end
-        SectionFinished = false
-    end
-    
-    --Run the setup.
-    task.spawn(function()
-        xpcall(function()
-            self:Setup()
-        end,function(ErrorMessage)
-            self:OutputMessage(Enum.MessageType.MessageError, ErrorMessage)
-            for _,Line in debug.traceback(nil, 2):split("\n") do
-                if Line ~= "" then
-                    self:OutputMessage(Enum.MessageType.MessageInfo, Line)
-                end
-            end
-            self.State = "FAILED"
-        end)
-        
-        self.SectionFinished:Fire()
-    end)
-    WaitForSectionToFinish()
-    if self.State ~= "INPROGRESS" then
-        SectionFinishedConnection:Disconnect()
-        return
-    end
     
     --Run the test.
-    local TestWorked = true
-    task.spawn(function()
-        TestWorked = xpcall(function()
-            self:BaseRunTest()
-        end,function(ErrorMessage)
-            self:OutputMessage(Enum.MessageType.MessageError, ErrorMessage)
-            for _,Line in debug.traceback(nil,2):split("\n") do
-                if Line ~= "" then
-                    self:OutputMessage(Enum.MessageType.MessageInfo, Line)
-                end
-            end
-            self.State = "FAILED"
-        end)
-        
-        self.SectionFinished:Fire()
-    end)
-    WaitForSectionToFinish()
-    
-    --Teardown the test.
-    local TeardownWorked = true
-    task.spawn(function()
-        TeardownWorked = xpcall(function()
-            self:Teardown()
-        end,function(ErrorMessage)
-            self:OutputMessage(Enum.MessageType.MessageError, ErrorMessage)
-            for _,Line in debug.traceback(nil,2):split("\n") do
-                if Line ~= "" then
-                    self:OutputMessage(Enum.MessageType.MessageInfo, Line)
-                end
-            end
-            self.State = "FAILED"
-        end)
-    
-        self.SectionFinished:Fire()
-    end)
-    WaitForSectionToFinish()
-    
-    --Mark the test as successful.
-    if self.State == "INPROGRESS" and TestWorked and TeardownWorked then
-        self.State = "PASSED"
-    end
-    
-    --Disconnect the event.
-    SectionFinishedConnection:Disconnect()
-end
-
---[[
-Runs all of the subtests.
---]]
-function UnitTest:RunSubtests(): ()
-    if #self.SubTests > 0 then
-        self.CombinedState = "INPROGRESS"
-        
-        --Run the subtests to get the tests.
-        for _, Test in self.SubTests do
-            if Test.State == "NOTRUN" and not Test.IsInternal then
-                Test:RunTest()
+    xpcall(function()
+        self:BaseRunTest()
+        if self.State == "INPROGRESS" then
+            self.State = "PASSED"
+        end
+    end, function(ErrorMessage)
+        self:OutputMessage(Enum.MessageType.MessageError, ErrorMessage)
+        for _,Line in debug.traceback(nil, 2):split("\n") do
+            if Line ~= "" then
+                self:OutputMessage(Enum.MessageType.MessageInfo, Line)
             end
         end
-        
-        --Run the subtests' subtests.
-        for _, Test in self.SubTests do
-            Test:RunSubtests()
-        end
-        
-        --Update the state.
-        self:UpdateCombinedState()
-    end
+        self.State = "FAILED"
+    end)
 end
 
 --[[
@@ -614,29 +490,11 @@ function UnitTest:SetEnvironmentOverride(Name: string, Value: any): UnitTest
 end
 
 --[[
-Sets the Setup method.
-Can be chained with other methods (Object:Method1(...):Method2(...)...)
---]]
-function UnitTest:SetSetup(Method: (UnitTest) -> ()): UnitTest
-    self.Setup = Method
-    return self
-end
-
---[[
 Sets the Run method.
 Can be chained with other methods (Object:Method1(...):Method2(...)...)
 --]]
 function UnitTest:SetRun(Method: (UnitTest) -> ()): UnitTest
     self.Run = Method
-    return self
-end
-
---[[
-Sets the Teardown method.
-Can be chained with other methods (Object:Method1(...):Method2(...)...)
---]]
-function UnitTest:SetTeardown(Method: (UnitTest) -> ()): UnitTest
-    self.Teardown = Method
     return self
 end
 
@@ -657,351 +515,6 @@ function UnitTest:UpdateCombinedState(): ()
     
     --Set the state.
     self.CombinedState = CombinedState
-end
-
---[[
-Outputs the Nexus Unit Testing assetion/setup deprecation message if it hasn't been printed already for the test.
---]]
-function UnitTest:ShowDeprecationWarning(): ()
-    if self.DeprecationWarningShown then return end
-    warn(LEGACY_NEXUS_UNIT_TEST_ASSERTION_DEPRECATED_MESSAGE)
-    self.DeprecationWarningShown = true
-end
-
---[[
-Stops the asserting thread if the
-test is completed.
---]]
-function UnitTest:StopAssertionIfCompleted()
-    if self.State == "PASSED" or self.State == "FAILED" or self.State == "SKIPPED" then
-        coroutine.yield()
-    end
-end
-
---[[
-Marks a unit test as passed.
---]]
-function UnitTest:Pass(Reason: string?): ()
-    self:ShowDeprecationWarning()
-    self:StopAssertionIfCompleted()
-    self.State = "PASSED"
-    
-    --Print the reason for passing.
-    if Reason ~= nil then
-        print("Test passed: "..Reason)
-    end
-    
-    --Stop the thread.
-    self.SectionFinished:Fire()
-    coroutine.yield()
-end
-
---[[
-Marks a unit test as failed.
---]]
-function UnitTest:Fail(Reason: string?): ()
-    self:ShowDeprecationWarning()
-    self:StopAssertionIfCompleted()
-    self.State = "FAILED"
-    
-    --Add a reason if none exists.
-    if Reason == nil then
-        Reason = "Test failed"
-    end
-    
-    --Throw an error.
-    error(Reason)
-end
-
---[[
-Marks a unit test as skipped.
---]]
-function UnitTest:Skip(Reason: string?): ()
-    self:ShowDeprecationWarning()
-    self:StopAssertionIfCompleted()
-    self.State = "SKIPPED"
-    
-    --Print the reason for skipping.
-    if Reason ~= nil then
-        print("Test skipped: "..Reason)
-    end
-    
-    --Stop the thread.
-    self.SectionFinished:Fire()
-    coroutine.yield()
-end
-
---[[
-Runs an assertion. Displays a message as an error if it fails.
---]]
-function UnitTest:Assert(Function: () -> (boolean), Message: string?): ()
-    self:ShowDeprecationWarning()
-    self:StopAssertionIfCompleted()
-    
-    --Run the unit test to see if the result is expected.
-    local ResultExpected = Function()
-    
-    --If the test failed, fail the unit test.
-    if not ResultExpected then
-        self:Fail(Message)
-    end
-end
-
---[[
-Asserts that two objects are equal. Special cases are handles for
-objects like arrays that may have the same elements. Not intended
-to be used on Roblox Instances.
---]]
-function UnitTest:AssertEquals<T>(ExpectedObject: T, ActualObject: T, Message: string?): ()
-    --Set up the message.
-    Message = Message or "Two objects aren't equal."
-    local Comparison = "\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
-    Message = (Message :: string)..Comparison
-    
-    --Set up the function.
-    local function Assert()
-        --Return false if the types are different.
-        if typeof(ExpectedObject) ~= typeof(ActualObject) then
-            return false
-        end
-        
-        --Return the result.
-        return Equals(ExpectedObject, ActualObject)
-    end
-    
-    --Run the assertion.
-    self:Assert(Assert, Message)    
-end
-    
---[[
-Asserts that two objects aren't equal. Special cases are handles for
-objects like arrays that may have the same elements.
---]]
-function UnitTest:AssertNotEquals<T>(ExpectedObject: T, ActualObject: T, Message: string?): ()
-    --Set up the message.
-    Message = Message or "Two objects are equal."
-    local Comparison = "\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
-    Message = (Message :: string)..Comparison
-    
-    --Set up the function.
-    local function Assert()
-        --Return true if the types are different.
-        if typeof(ExpectedObject) ~= typeof(ActualObject) then
-            return true
-        end
-        
-        --Return the result.
-        return not Equals(ExpectedObject, ActualObject)
-    end
-    
-    --Run the assertion.
-    self:Assert(Assert, Message)    
-end
-
---[[
-Asserts that two objects are the same. This is mainly used for testing
-if a new array or instance isn't created.
---]]
-function UnitTest:AssertSame<T>(ExpectedObject: T, ActualObject: T, Message: string?): ()
-    --Set up the message.
-    Message = Message or "Two objects aren't the same."
-    Message = (Message :: string).."\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
-    
-    --Set up the function.
-    local function Assert()
-        return ExpectedObject == ActualObject
-    end
-    
-    --Run the assertion.
-    self:Assert(Assert, Message)
-end
-    
---[[
-Asserts that two objects aren't the same. This is mainly used for testing
-if a new array or instance isn't created.
---]]
-function UnitTest:AssertNotSame<T>(ExpectedObject: T, ActualObject: T, Message: string?): ()
-    --Set up the message.
-    if not Message then
-        Message = "Two objects are the same."
-    end
-    Message = Message or "Two objects are the same."
-    Message = (Message :: string).."\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
-    
-    --Set up the function.
-    local function Assert()
-        return ExpectedObject ~= ActualObject
-    end
-    
-    --Run the assertion.
-    self:Assert(Assert, Message)
-end
-
---[[
-Asserts that two objects are within a given Epsilon of each other. If
-the message is used in place of the Epsilon, 0.001 will be used.
---]]
-function UnitTest:AssertClose<T>(ExpectedObject: T, ActualObject: T, Epsilon: number? | string?, Message: string?): ()
-    --Set the message as the epsilon if needed.
-    if type(Epsilon) == "string" and Message == nil then
-        Message = Epsilon
-        Epsilon = 0.001
-    end
-    
-    --Set up the message.
-    Message = Message or "Two objects aren't close."
-    local Comparison = "\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
-    Message = (Message :: string)..Comparison
-    
-    --Set up the function.
-    local function Assert()
-        --Fail the test if the types are different.
-        if typeof(ExpectedObject) ~= typeof(ActualObject) then
-            self:Fail("Two objects aren't the same type."..Comparison)
-        end
-        
-        --Determine if they are close.
-        local Result, _ = IsClose.IsClose(ExpectedObject, ActualObject, Epsilon :: number)
-        if Result == "UNSUPPORTED_TYPE" or Result == "DIFFERENT_TYPES" then
-            self:Fail("Two objects can't be compared for closeness."..Comparison)
-        end
-        
-        return Result == "CLOSE"
-    end
-    
-    --Run the assertion.
-    self:Assert(Assert ,Message)
-end
-    
---[[
-Asserts that two objects aren't within a given Epsilon of each other. If
-the message is used in place of the Epsilon, 0.001 will be used.
---]]
-function UnitTest:AssertNotClose<T>(ExpectedObject: T, ActualObject: T, Epsilon: number? | string?, Message: string?): ()
-    --Set the message as the epsilon if needed.
-    if type(Epsilon) == "string" and Message == nil then
-        Message = Epsilon
-        Epsilon = 0.001
-    end
-    
-    --Set up the message.
-    Message = Message or "Two objects aren't close."
-    local Comparison = "\n\tObject 1: "..tostring(ExpectedObject).."\n\tObject 2: "..tostring(ActualObject)
-    Message = (Message :: string)..Comparison
-    
-    --Set up the function.
-    local function Assert()
-        --Fail the test if the types are different.
-        if typeof(ExpectedObject) ~= typeof(ActualObject) then
-            self:Fail("Two objects aren't the same type."..Comparison)
-        end
-        
-        --Determine if they are close.
-        local Result, _ = IsClose.IsClose(ExpectedObject, ActualObject, Epsilon :: number)
-        if Result == "UNSUPPORTED_TYPE" or Result == "DIFFERENT_TYPES" then
-            self:Fail("Two objects can't be compared for closeness."..Comparison)
-        end
-        
-        return Result == "NOT_CLOSE"
-    end
-    
-    --Run the assertion.
-    self:Assert(Assert, Message)    
-end
-    
---[[
-Asserts that an object is false.
---]]
-function UnitTest:AssertFalse(ActualObject: boolean, Message: string?): ()
-    --Set up the message.
-    Message = Message or "Object isn't false."
-    Message = (Message :: string).."\n\tActual: "..tostring(ActualObject)
-    
-    --Set up the function.
-    local function Assert()
-        return ActualObject == false
-    end
-    
-    --Run the assertion.
-    self:Assert(Assert, Message)    
-end
-    
---[[
-Asserts that an object is true.
---]]
-function UnitTest:AssertTrue(ActualObject: boolean, Message: string?): ()
-    --Set up the message.
-    Message = Message or "Object isn't true."
-    Message = (Message :: string).."\n\tActual: "..tostring(ActualObject)
-    
-    --Set up the function.
-    local function Assert()
-        return ActualObject == true
-    end
-    
-    --Run the assertion.
-    self:Assert(Assert, Message)    
-end
-
---[[
-Asserts that an object is nil.
---]]
-function UnitTest:AssertNil(ActualObject: any, Message: string?): ()
-    --Set up the message.
-    Message = Message or "Object isn't nil."
-    Message = (Message :: string).."\n\tActual: "..tostring(ActualObject)
-    
-    --Set up the function.
-    local function Assert()
-        return ActualObject == nil
-    end
-    
-    --Run the assertion.
-    self:Assert(Assert, Message)
-end
-    
---[[
-Asserts that an object is not nil.
---]]
-function UnitTest:AssertNotNil(ActualObject: any, Message: string?): ()
-    --Set up the message.
-    Message = Message or "Object is nil."
-    Message = (Message :: string).."\n\tActual: "..tostring(ActualObject)
-    
-    --Set up the function.
-    local function Assert()
-        return ActualObject ~= nil
-    end
-    
-    --Run the assertion.
-    self:Assert(Assert, Message)
-end
-
---[[
-Asserts that an error is thrown.
---]]
-function UnitTest:AssertErrors(Function: () -> (), Message: string): ErrorAssertor.ErrorAssertor
-    --Set up the message.
-    if not Message then
-        Message = "No error was created."
-    end
-    
-    --Set up the function.
-    local Assertor
-    local function Assert()
-        local Worked, Return = pcall(function()
-            Function()
-        end)
-        if not Worked then
-            Assertor = ErrorAssertor.new(Return)
-        end
-        
-        return not Worked
-    end
-    
-    --Run the assertion and return the assertor.
-    self:Assert(Assert, Message)
-    return Assertor
 end
 
 
