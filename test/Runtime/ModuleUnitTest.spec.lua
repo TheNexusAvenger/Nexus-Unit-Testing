@@ -198,5 +198,49 @@ return function()
             expect(SubTests[1].SubTests[10].CombinedState).to.equal("FAILED")
             expect(#SubTests[1].SubTests[10].SubTests).to.equal(0)
         end)
+
+        it("should handle contexts.", function()
+            --Create the module.
+            local Folder = Instance.new("Folder")
+            Folder.Name = "TestFolder"
+            local Module = Instance.new("ModuleScript")
+            Module.Name = "TestModule.spec"
+            Module.Source = "return function()"..
+                "beforeAll(function(context)"..
+                "    context.Value1 = \"test1\""..
+                "end)"..
+                "describe(\"Test\", function()"..
+                "    beforeEach(function(context)"..
+                "        context.Value2 = \"test2\""..
+                "    end)"..
+                "    it(\"should work\", function(context)"..
+                "        expect(context.Value1).to.equal(\"test1\")"..
+                "        expect(context.Value2).to.equal(\"test2\")"..
+                "    end)"..
+                "end)"..
+                "end"
+            Module.Parent = Folder
+            
+            --Create the test.
+            local TestModuleUnitTest = ModuleUnitTest.new(Module)
+            local SubTests = TestModuleUnitTest.SubTests :: {any}
+            
+            --Assert the test is ran correctly.
+            expect(TestModuleUnitTest.State).to.equal("NOTRUN")
+            expect(TestModuleUnitTest.CombinedState).to.equal("NOTRUN")
+            TestModuleUnitTest:RunTest()
+            expect(TestModuleUnitTest.State).to.equal("PASSED")
+            expect(TestModuleUnitTest.CombinedState).to.equal("PASSED")
+            expect(#SubTests).to.equal(1)
+            expect(SubTests[1].Name).to.equal("Test")
+            expect(SubTests[1].State).to.equal("PASSED")
+            expect(SubTests[1].CombinedState).to.equal("PASSED")
+            expect(#SubTests[1].SubTests).to.equal(1)
+            expect(SubTests[1].SubTests[1].Name).to.equal("should work")
+            expect(SubTests[1].SubTests[1].State).to.equal("PASSED")
+            expect(SubTests[1].SubTests[1].CombinedState).to.equal("PASSED")
+            expect(SubTests[1].SubTests[1].CombinedState).to.equal("PASSED")
+            expect(#SubTests[1].SubTests[1].SubTests).to.equal(0)
+        end)
     end)
 end

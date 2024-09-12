@@ -46,7 +46,7 @@ export type UnitTest = {
     Run: (self: UnitTest) -> (),
     OutputMessage: (self: UnitTest, Type: Enum.MessageType, ...any) -> (),
     RegisterUnitTest: (self: UnitTest, NewUnitTest: string | UnitTest, Function: (self: UnitTest) -> ()?) -> (),
-    RunTest: (self: UnitTest) -> (),
+    RunTest: (self: UnitTest, ...any) -> (),
     SetEnvironmentOverride: (self: UnitTest, Name: string, Value: any) -> (UnitTest),
     SetRun: (self: UnitTest, Method: (UnitTest) -> ()) -> (UnitTest),
 } & NexusInstance.NexusInstance
@@ -225,13 +225,16 @@ function UnitTest:WrapTestEZNodeEnvironment(CurrentNode: any): ()
     --[[
     Adds a child node.
     --]]
-    local function AddChild(Phrase: string, Callback: () -> (), NodeType: any, NodeModifier: any)
+    local function AddChild(Phrase: string, Callback: (any) -> (), NodeType: any, NodeModifier: any)
         --Create the parent test.
         local ParentTest = CurrentNode.NexusUnitTest
         local NewTest = (UnitTest :: any).new(Phrase, true)
         NewTest.IsInternal = true
         NewTest.TestEZExtensionsEnabled = self.TestEZExtensionsEnabled
-        NewTest.Run = Callback
+        NewTest.Run = function(_, ...)
+            NewTest:WrapEnvironment(Callback)
+            Callback(...)
+        end
         if NodeModifier == TestEZ.TestEnum.NodeModifier.Skip or CurrentNode.modifier == TestEZ.TestEnum.NodeModifier.Skip then
             NewTest.State = "SKIPPED"
         end
@@ -240,9 +243,9 @@ function UnitTest:WrapTestEZNodeEnvironment(CurrentNode: any): ()
         --Create the node.
         local Node = CurrentNode:addChild(Phrase, NodeType, NodeModifier)
         Node.NexusUnitTest = NewTest
-        Node.callback = function()
+        Node.callback = function(...)
             --Run the test.
-            NewTest:RunTest()
+            NewTest:RunTest(...)
 
             --Update the state.
             if Node.modifier == TestEZ.TestEnum.NodeModifier.Skip or ParentTest.State == "SKIPPED" then
@@ -322,8 +325,8 @@ function UnitTest:AddTestEZOverrides(): ()
     local TestPlan = TestEZ.TestPlan.new()
     self:WrapTestEZTestNode(TestPlan)
     local TestNode = TestPlan:addChild(self.Name, TestEZ.TestEnum.NodeType.Describe)
-    TestNode.callback = function()
-        self:Run()
+    TestNode.callback = function(...)
+        self:Run(...)
     end
     self.TestNode = TestNode
     self.TestPlan = TestPlan
@@ -438,7 +441,7 @@ end
 --[[
 Runs the run method and any TestEZ tests.
 --]]
-function UnitTest:BaseRunTest()
+function UnitTest:BaseRunTest(...)
     if self.TestNode then
         self.TestNode:expand()
         TestEZ.TestRunner.runPlan(self.TestPlan)
@@ -447,7 +450,7 @@ function UnitTest:BaseRunTest()
             self:OutputMessage(Enum.MessageType.MessageError, self.TestNode.loadError)
         end
     else
-        self:Run()
+        self:Run(...)
     end
 end
 
@@ -456,15 +459,16 @@ Runs the complete text. Should not be overriden
 to run tests since it is intended to be used by the
 view to run tests.
 --]]
-function UnitTest:RunTest(): ()
+function UnitTest:RunTest(...): ()
     self.State = "INPROGRESS"
     
     --Wrap the methods.
     self:WrapEnvironment(self.Run)
     
     --Run the test.
+    local Arguments = table.pack(...)
     xpcall(function()
-        self:BaseRunTest()
+        self:BaseRunTest(table.unpack(Arguments))
         if self.State == "INPROGRESS" then
             self.State = "PASSED"
         end
