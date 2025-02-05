@@ -1,3 +1,5 @@
+**Nexus Unit Testing has been replaced with [Avant Runtime](https://github.com/Avant-Rbx/Avant-Runtime).**
+
 **Nexus Unit Testing** is a unit testing framework meant to
 simplify unit testing on the Roblox platform. The framework
 uses assertion based unit testing. This is an alternative to
